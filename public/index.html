@@ -1,0 +1,1546 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#151922">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SobatSehat - Jelajah Tubuh</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef3f1;--bg2:#d9e8e4;--fg:#10262b;--mut:#54707300;--mut:#547073;--card:rgba(255,255,255,.78);--bd:rgba(16,38,43,.14);--ac:#e4572e;--ac2:#0f766e;--onac:#fff;--stage:#f8fbfa;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1416;--bg2:#10302f;--fg:#e8f3f1;--mut:#93b0ae;--card:rgba(20,40,42,.8);--bd:rgba(232,243,241,.16);--ac:#ff7a4d;--ac2:#2dd4bf;--onac:#1a0b05;--stage:#0e1d20}}
+:root[data-theme="dark"]{--bg:#0a1416;--bg2:#10302f;--fg:#e8f3f1;--mut:#93b0ae;--card:rgba(20,40,42,.8);--bd:rgba(232,243,241,.16);--ac:#ff7a4d;--ac2:#2dd4bf;--onac:#1a0b05;--stage:#0e1d20}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{position:relative;overflow:hidden;background:var(--bg);color:var(--fg);font-family:'Bricolage Grotesque',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;line-height:1.5}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--ac2);outline-offset:2px}
+.scr{position:absolute;inset:0;display:none;flex-direction:column}
+.scr.on{display:flex}
+#welcome{align-items:center;justify-content:center;text-align:center;padding:24px;background:radial-gradient(60% 50% at 20% 15%,var(--bg2),transparent 70%),radial-gradient(50% 45% at 85% 85%,color-mix(in srgb,var(--ac) 22%,transparent),transparent 70%),var(--bg)}
+.pulse{width:84px;height:84px;border-radius:50%;display:grid;place-items:center;background:var(--ac);color:var(--onac);margin-bottom:28px;box-shadow:0 0 0 0 color-mix(in srgb,var(--ac) 50%,transparent);animation:beat 1.6s infinite}
+.pulse svg{width:42px;height:42px}
+@keyframes beat{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ac) 50%,transparent)}70%{box-shadow:0 0 0 26px transparent}100%{box-shadow:0 0 0 0 transparent}}
+h1{font-size:clamp(2.2rem,6vw,4rem);font-weight:800;line-height:1.05;letter-spacing:-.02em;max-width:14ch}
+.sub{margin:16px auto 32px;max-width:46ch;color:var(--mut);font-size:1.05rem}
+.menu{display:flex;flex-direction:column;gap:12px;width:min(100%,360px)}
+.big{display:flex;align-items:center;gap:14px;text-align:left;padding:16px 18px;border-radius:20px;border:1px solid transparent;background:var(--ac);color:var(--onac);font-weight:700;font-size:1.1rem;transition:transform .15s}
+.big:hover{transform:translateY(-2px)}
+.big small{display:block;font-weight:500;font-size:.85rem;opacity:.85}
+.big svg{width:30px;height:30px;flex:none}
+.note{margin-top:28px;font-size:.8rem;color:var(--mut);max-width:44ch}
+.bar{display:flex;align-items:center;gap:12px;padding:12px 16px}
+.bar h2{font-size:1.2rem;font-weight:700}
+.back{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;border:1px solid var(--bd);background:var(--card)}
+.main{flex:1;min-height:0;display:flex;flex-direction:column;gap:12px;padding:0 12px 12px}
+.left{flex:1;min-height:0;min-width:0;display:flex;flex-direction:column;gap:10px}
+#chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;scrollbar-width:thin}
+.chip{flex:none;padding:8px 14px;border-radius:999px;border:1px solid var(--bd);background:var(--card);font-weight:600;font-size:.88rem;white-space:nowrap}
+.chip.on{background:var(--ac2);color:var(--onac);border-color:transparent}
+#stage{position:relative;flex:1;min-height:0;border-radius:26px;border:1px solid var(--bd);overflow:hidden;background:radial-gradient(70% 60% at 50% 45%,var(--stage),var(--bg2))}
+#stage canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+#stage canvas:active{cursor:grabbing}
+.hint{position:absolute;left:0;right:0;bottom:12px;text-align:center;font-size:.8rem;color:var(--mut);pointer-events:none}
+#panel{flex:none;max-height:38vh;overflow:auto;border-radius:24px;border:1px solid var(--bd);background:var(--card);backdrop-filter:blur(10px);padding:18px 20px;position:relative;z-index:6}
+.ph{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.dot{width:14px;height:14px;border-radius:50%;flex:none}
+#panel h3{font-size:1.5rem;font-weight:800;line-height:1.1}
+.tag{color:var(--mut);font-size:.85rem}
+.x{margin-left:auto;width:34px;height:34px;border-radius:50%;border:1px solid var(--bd);background:transparent}
+.blk{margin-top:12px}
+.blk b{display:block;font-size:.9rem;color:var(--ac2)}
+.blk p{font-size:.95rem}
+.empty{color:var(--mut)}
+.empty h3{color:var(--fg);margin-bottom:6px}
+.foot{margin-top:16px;font-size:.75rem;color:var(--mut)}
+#lines{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:5;display:none}
+#ln{stroke:var(--ac);stroke-width:2;stroke-dasharray:7 5;animation:dash 1s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-12}}
+@media(min-width:860px){.main{flex-direction:row;padding:0 20px 20px;gap:18px}#panel{width:350px;max-height:none}}
+@media(prefers-reduced-motion:reduce){.pulse,#ln{animation:none}.big{transition:none}}
+</style>
+<style>
+:root{--bg:#f6f8f9;--bg2:#eaf0f2;--fg:#0d1b24;--mut:#5a6b75;--card:#fff;--bd:#dde4e8;--ac:#0b7a75;--ac2:#0b7a75;--onac:#fff;--stage:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1317;--bg2:#121d23;--fg:#e9f1f4;--mut:#8fa3ad;--card:#121d23;--bd:#24343c;--ac:#3fd0c4;--ac2:#3fd0c4;--onac:#04201e;--stage:#0f1a1f}}
+:root[data-theme="dark"]{--bg:#0b1317;--bg2:#121d23;--fg:#e9f1f4;--mut:#8fa3ad;--card:#121d23;--bd:#24343c;--ac:#3fd0c4;--ac2:#3fd0c4;--onac:#04201e;--stage:#0f1a1f}
+#welcome{background:var(--bg)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.1rem;color:var(--ac);margin-bottom:28px}
+.brand svg{width:26px;height:26px}
+.big{background:var(--card);color:var(--fg);border:1px solid var(--bd)}
+.big svg{color:var(--ac)}
+.big small{color:var(--mut);opacity:1}
+.big:hover{border-color:var(--ac);transform:none}
+#stage{background:var(--stage)}
+#panel{backdrop-filter:none;background:var(--card)}
+.blk{margin-top:14px;padding-top:14px;border-top:1px solid var(--bd)}
+.blk b{color:var(--mut);font-weight:600;font-size:.82rem}
+#ln{stroke-dasharray:none;animation:none;stroke-width:1.5}
+.seg{display:flex;margin-left:auto;padding:3px;border:1px solid var(--bd);border-radius:12px;background:var(--card)}
+.seg button{border:0;background:transparent;padding:6px 14px;border-radius:9px;font-weight:600;font-size:.88rem}
+.seg button.on{background:var(--ac);color:var(--onac)}
+</style>
+<style>
+:root,:root:not([data-theme="light"]),:root[data-theme="dark"]{--bg:#050b18;--bg2:#0a1d3a;--fg:#e8f1ff;--mut:#8fa9cc;--card:rgba(8,24,52,.78);--bd:rgba(90,170,255,.28);--ac:#3db8ff;--ac2:#3db8ff;--onac:#021426;--stage:#0a2a52}
+#welcome{background:radial-gradient(55% 45% at 50% 40%,#0d3463,transparent 72%),var(--bg)}
+.big:hover{border-color:var(--ac)}
+#stage{background:radial-gradient(45% 55% at 50% 45%,#12457d 0%,#082245 55%,#050d1f 100%)}
+.hint{color:#6f8fb8;z-index:1}
+#chips{display:none}
+.bar h2 small{display:block;font-size:.74rem;font-weight:500;color:var(--mut);letter-spacing:.03em}
+.cols{position:absolute;inset:0;z-index:2;display:flex;justify-content:space-between;padding:14px 12px;pointer-events:none}
+.col{width:210px;display:flex;flex-direction:column;justify-content:space-around;gap:6px}
+.card{pointer-events:auto;text-align:left;background:rgba(6,20,46,.72);border:1px solid rgba(90,170,255,.3);border-left:3px solid var(--k);border-radius:10px;padding:8px 10px;color:#e8f1ff}
+.card b{display:block;font-size:.92rem}
+.card span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:.73rem;line-height:1.3;color:#9db6d6}
+.card.on{background:rgba(20,76,140,.88);border-color:#7fd4ff;box-shadow:0 0 16px rgba(61,184,255,.55)}
+.ln{stroke:rgba(100,190,255,.55);stroke-width:1}.ln.on{stroke:#8fe0ff;stroke-width:2}
+.dt{stroke:#fff;stroke-width:1.2}.dt.on{stroke-width:4}
+#panel{max-height:30vh}
+@media(max-width:759px){.col{width:84px}.card{padding:6px 8px;border-radius:8px}.card b{font-size:.72rem;line-height:1.2}.card span{display:none}}
+@media(min-width:860px){.main{flex-direction:column}#panel{width:auto;max-height:none}#panel.sel{display:grid;grid-template-columns:minmax(170px,.8fr) repeat(3,1fr);gap:0 22px;align-items:start}#panel.sel .blk{margin:0;padding:0;border:0}#panel.sel .foot{grid-column:1/-1}#panel .ph{margin:0}}
+</style>
+<style>
+.zoom{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);display:flex;gap:8px;z-index:3}
+.zoom button{width:34px;height:34px;border-radius:50%;border:1px solid var(--bd);background:var(--card);font-size:1.1rem;line-height:1}
+.compact .card{padding:4px 8px}.compact .card b{font-size:.8rem}.compact .card span{display:none}
+.dt{stroke:#06182f;stroke-width:1}.dt.on{stroke:#fff;stroke-width:2.5}
+.ln{stroke:rgba(100,190,255,.4)}.ln.on{stroke:#8fe0ff}
+.card.off{opacity:.55}
+.pg{flex:1;min-height:0;overflow:auto;padding:0 16px 24px;width:100%;max-width:760px;margin:0 auto;display:grid;gap:14px;align-content:start}
+.fc{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:18px}
+.fc h3{font-size:1.1rem;margin-bottom:4px}
+.lbl{margin:14px 0 8px;font-size:.85rem;color:var(--mut);font-weight:600}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{flex:none;padding:8px 14px;border-radius:999px;border:1px solid var(--bd);background:transparent;font-weight:600;font-size:.88rem}
+.opt.on{background:var(--ac);color:var(--onac);border-color:transparent}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:14px}
+label.f{display:grid;gap:6px;font-size:.85rem;color:var(--mut);font-weight:600}
+input[type=number],textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--bd);background:rgba(255,255,255,.05);color:var(--fg);font:inherit}
+input[type=range]{accent-color:var(--ac);width:100%}
+.acts{margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.big.sm{width:auto;justify-content:center;padding:12px 20px;font-size:1rem}
+.lnk{background:none;border:0;color:var(--ac);font-weight:600;font-size:.85rem;text-align:left;padding:0}
+.hd{display:flex;justify-content:space-between;align-items:center}
+.he{border-top:1px solid var(--bd);padding:12px 0;display:grid;gap:4px}
+.he .t{font-weight:700;font-size:.9rem}.he p{font-size:.88rem;color:var(--mut)}
+.warn{margin:0 16px 8px;padding:10px 14px;border-radius:14px;background:rgba(255,170,60,.12);border:1px solid rgba(255,170,60,.4);font-size:.82rem}
+.ctx{margin:0 16px 8px;font-size:.85rem;color:var(--mut);display:flex;gap:8px;align-items:center}
+.msgs{flex:1;min-height:0;overflow:auto;padding:4px 16px;display:flex;flex-direction:column;gap:10px;width:100%;max-width:760px;margin:0 auto}
+.b{max-width:85%;padding:10px 14px;border-radius:16px;white-space:pre-wrap;font-size:.95rem}
+.b.u{align-self:flex-end;background:var(--ac);color:var(--onac);border-bottom-right-radius:4px}
+.b.a{align-self:flex-start;background:var(--card);border:1px solid var(--bd);border-bottom-left-radius:4px}
+.qp{display:flex;gap:8px;overflow-x:auto;padding:8px 16px;width:100%;max-width:760px;margin:0 auto}
+.inp{display:flex;gap:8px;padding:8px 16px 14px;width:100%;max-width:760px;margin:0 auto}
+.inp textarea{resize:none}
+.sendb{padding:0 20px;border-radius:12px;border:0;background:var(--ac);color:var(--onac);font-weight:700}
+.sendb:disabled{opacity:.5}
+.menu{width:min(100%,380px)}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root,:root:not([data-theme="light"]),:root[data-theme="dark"]{--bg:#f4f6f9;--bg2:#fdeceb;--fg:#1b2533;--mut:#667385;--card:#fff;--bd:#e4e8ee;--ac:#e8412f;--ac2:#0e9f8e;--onac:#fff;--stage:#fff}
+body{font-family:'Plus Jakarta Sans','Bricolage Grotesque',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+#welcome{align-items:stretch;justify-content:flex-start;text-align:left;padding:0;background:var(--bg);overflow:auto}
+.home{width:100%;max-width:1040px;margin:0 auto;padding:16px 16px 28px;display:grid;gap:22px;align-content:start}
+.hero{display:grid;grid-template-columns:1.3fr .7fr;gap:12px;align-items:center;padding:28px;border-radius:24px;color:#fff;background:linear-gradient(135deg,#ff7a5c,#e8412f 60%,#cf2f2a);overflow:hidden}
+.hero .hi{opacity:.92;font-weight:600;font-size:.9rem}
+.hero h1{font-size:clamp(1.6rem,4vw,2.5rem);max-width:none;margin:4px 0 8px;letter-spacing:-.01em}
+.hero p{font-size:.95rem}
+.srch{display:flex;gap:8px;margin-top:18px;padding:6px;border-radius:14px;background:#fff;box-shadow:0 8px 24px rgba(120,20,10,.25)}
+.srch input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#1b2533;font:inherit;padding:8px 10px;font-size:.95rem}
+.srch button{border:0;border-radius:10px;background:var(--ac);color:#fff;font-weight:700;padding:0 18px}
+.hero .il{width:100%;max-width:220px;justify-self:center}
+.sec{font-size:1.15rem;font-weight:800}
+.grid,.tips{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.tile{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:16px 8px;background:#fff;color:var(--fg);border:1px solid var(--bd);border-radius:18px;box-shadow:0 1px 3px rgba(16,24,40,.06);transition:transform .15s,box-shadow .15s}
+.tile:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(16,24,40,.1)}
+.tile b{font-size:.9rem}.tile small{display:none;color:var(--mut);font-size:.82rem}
+.ti{width:52px;height:52px;flex:none;border-radius:16px;display:grid;place-items:center}
+.ti svg{width:26px;height:26px}
+.t1{background:#dff4f1;color:#0e9f8e}.t2{background:#fff1d6;color:#d98a00}.t3{background:#ffe6e1;color:#e8412f}
+.tp{display:flex;gap:12px;align-items:center;padding:14px;background:#fff;border:1px solid var(--bd);border-radius:18px}
+.tp .ti{width:44px;height:44px;border-radius:50%}.tp b{display:block;font-size:.92rem}.tp span{font-size:.82rem;color:var(--mut)}
+.note{font-size:.8rem;color:var(--mut)}
+@media(max-width:700px){.hero{grid-template-columns:1fr;padding:20px}.hero .il{display:none}.tips{grid-template-columns:1fr}}
+@media(min-width:701px){.tile{flex-direction:row;text-align:left;padding:18px;gap:14px}.tile small{display:block}}
+#nav{position:absolute;z-index:20;display:flex;background:#fff}
+#nav .lg{display:none;align-items:center;gap:10px;font-weight:800;font-size:1.2rem;color:var(--ac);margin-right:24px}
+#nav .lg i{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--ac);color:#fff}
+#nav .lg svg{width:20px;height:20px}
+#nav button{border:0;background:transparent;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.7rem;font-weight:600;padding:6px 10px;border-radius:12px}
+#nav button svg{width:22px;height:22px}
+#nav button.on{color:var(--ac)}
+@media(max-width:859px){#nav{left:0;right:0;bottom:0;height:62px;border-top:1px solid var(--bd);justify-content:space-around}.scr{bottom:62px}}
+@media(min-width:860px){#nav{left:0;right:0;top:0;height:64px;border-bottom:1px solid var(--bd);align-items:center;padding:0 28px;gap:6px}#nav .lg{display:flex}#nav button{flex-direction:row;font-size:.92rem;gap:8px;padding:8px 14px}#nav button.on{background:#fdecea}.scr{top:64px}}
+.zoom button{background:rgba(6,20,46,.85);color:#e8f1ff;border-color:rgba(90,170,255,.35)}
+.fc,#panel{box-shadow:0 1px 3px rgba(16,24,40,.06)}
+input[type=number],textarea{background:#fff;color:var(--fg)}
+.big{background:var(--ac);color:var(--onac);border:0}
+.big:hover{filter:brightness(.95);border-color:transparent}
+.back,.seg,.opt{background:#fff}
+.warn{background:#fff6e6;border-color:#f6d9a1;color:#6b4a00}
+#explore .bar{padding:8px 12px;gap:10px}
+#explore .bar h2{font-size:1.05rem;white-space:nowrap}
+#explore .back{width:38px;height:38px;flex:none}
+.seg button{padding:6px 11px;font-size:.8rem}
+.main{padding:0 10px 10px;gap:8px}
+.hint{display:none}
+.zoom{bottom:8px}.zoom button{width:32px;height:32px;font-size:1rem}
+.cols{padding:8px 6px}
+.col{justify-content:space-around}
+.narrow .col{width:92px;justify-content:space-between;gap:4px}
+.narrow .col .card{flex:1 1 0;max-height:46px;display:flex;align-items:center;padding:4px 7px;border-radius:8px}
+.narrow .card b{font-size:.68rem;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.narrow .card span{display:none}
+#panel{max-height:none;min-height:168px;padding:12px 14px;border-radius:18px;overflow:auto}
+#panel:not(.sel){display:flex;align-items:center;justify-content:center}
+.empty1{font-size:.88rem;color:var(--mut);text-align:center}
+#panel h3{font-size:1.1rem}
+#panel .ph{margin:0}
+.tabs{display:flex;gap:6px;margin:8px 0;flex-wrap:wrap}
+.tabs button{border:1px solid var(--bd);background:#fff;border-radius:999px;padding:5px 12px;font-size:.78rem;font-weight:600}
+.tabs button.on{background:var(--ac);color:#fff;border-color:transparent}
+#panel .blk{display:none;margin:0;padding:0;border:0}
+#panel .blk.act{display:block}
+#panel .blk b{display:none}
+#panel .blk p{font-size:.9rem;max-height:4.6em;overflow:auto}
+#panel .foot{display:none}
+@media(max-width:700px){.bar h2 small{display:none}}
+@media(min-width:860px){
+ .main{flex-direction:row;padding:0 20px 20px;gap:16px}
+ #panel{width:340px;flex:none;min-height:0;padding:18px}
+ #panel.sel{display:block}
+ .tabs{display:none}
+ #panel.sel .blk,#panel.sel .blk.act{display:block;margin-top:14px;padding-top:14px;border-top:1px solid var(--bd)}
+ #panel.sel .blk b{display:block;color:var(--mut);font-size:.82rem;font-weight:600}
+ #panel .blk p{max-height:none}
+ #panel .foot{display:block;margin-top:14px}
+}
+.dz{list-style:none;padding:0;display:flex;flex-direction:column;gap:6px;max-height:9.5em;overflow:auto}
+.dz li{font-size:.86rem;line-height:1.35}
+.dz strong{font-weight:700}
+#panel .blk p.dzn{font-size:.75rem;color:var(--mut);margin-top:8px;max-height:none}
+@media(min-width:860px){.dz{max-height:none}}
+.kw{max-height:12em;overflow:auto}
+.kq{font-size:.82rem!important;color:var(--mut);margin-bottom:6px;max-height:none!important}
+.kt{width:100%;resize:vertical;min-height:4.5em;padding:9px 11px;border-radius:12px;border:1px solid var(--bd);background:transparent;color:var(--fg);font:inherit;font-size:.9rem;line-height:1.4}
+.kt:focus-visible{outline:3px solid var(--ac2);outline-offset:2px}
+.rf{margin-top:10px;font-size:.8rem;padding:8px 10px;border-radius:10px;border:1px solid #ff6b6b;background:rgba(255,80,80,.12)}
+.ask{margin-top:10px;width:100%;padding:9px 12px;border-radius:12px;border:0;background:var(--ac);color:var(--onac);font-weight:700}
+.ask:disabled{opacity:.45;cursor:default}
+@media(min-width:860px){.kw{max-height:none}}
+.acct{display:none;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-bottom:10px;font-size:.82rem;color:var(--mut)}
+.gbtn{border:1px solid var(--bd);background:var(--card);color:var(--fg);border-radius:999px;padding:7px 14px;font-weight:600;font-size:.84rem}
+.rh{margin-left:auto;border:1px solid var(--bd);background:var(--card);color:var(--fg);border-radius:999px;padding:6px 12px;font-size:.82rem;font-weight:600}
+.hl{flex:1;min-height:0;overflow:auto;padding:4px 16px 16px;width:100%;max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+.hl details{border:1px solid var(--bd);background:var(--card);border-radius:14px;padding:10px 14px}
+.hl summary{cursor:pointer;display:flex;flex-direction:column;gap:2px;list-style:none}
+.hl summary::-webkit-details-marker{display:none}
+.hl summary:focus-visible{outline:3px solid var(--ac2);outline-offset:2px}
+.hm{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.hm .b{max-width:92%}
+.hl .lnk{margin:0}
+.ha{display:flex;gap:18px;margin-top:10px}
+.rg{margin-left:auto;display:flex;gap:6px}
+.rg .rh{margin-left:0}
+.home{max-width:640px;gap:16px;padding-top:max(14px,env(safe-area-inset-top,0px))}
+.tb{display:flex;align-items:center;gap:10px}
+.pill{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding:8px 14px;border-radius:999px;background:var(--card);border:1px solid var(--bd)}
+.pill b{display:block;font-size:.95rem;line-height:1.2}.pill small{display:block;color:var(--mut);font-size:.76rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pill .lg{width:36px;height:36px;object-fit:contain;flex:none}
+.pill i{width:32px;height:32px;border-radius:50%;background:var(--ac);color:#fff;display:grid;place-items:center;flex:none}.pill i svg{width:18px;height:18px}
+.avt{width:46px;height:46px;border-radius:50%;border:2px solid var(--ac2);background:var(--card);color:var(--fg);overflow:hidden;display:grid;place-items:center;padding:0;font-weight:800;flex:none}
+.avt img{width:100%;height:100%;object-fit:cover}.avt svg{width:24px;height:24px;color:var(--mut)}
+.gr{font-size:1rem;color:var(--mut)}
+.gn{font-size:clamp(1.5rem,6vw,2rem);font-weight:800;line-height:1.1;letter-spacing:-.01em;max-width:none;overflow-wrap:anywhere}
+.svc{display:grid;grid-template-columns:repeat(4,1fr);gap:16px 4px;padding:18px 6px;border-radius:24px;background:var(--card);border:1px solid var(--bd)}
+.sv{display:flex;flex-direction:column;align-items:center;gap:6px;border:0;background:transparent;color:var(--fg);font-size:.74rem;font-weight:600;text-align:center;text-decoration:none;padding:0;line-height:1.2}
+.sv span{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;color:#fff;background:linear-gradient(160deg,var(--c1),var(--c2))}
+.sv svg,.pr svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sv svg{width:26px;height:26px}
+.lc{display:block;width:100%;text-align:left;border-radius:20px;border:1px solid var(--bd);background:var(--card);overflow:hidden;padding:0;color:var(--fg);font:inherit}
+.lch{padding:10px 18px;background:var(--ac2);color:#fff;font-weight:800;font-size:.85rem}
+.lcb{padding:14px 18px;display:grid;gap:4px}.lcb h3{font-size:1.2rem}.lcb p{font-size:.88rem;color:var(--mut)}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cd{border-radius:20px;border:1px solid var(--bd);background:var(--card);overflow:hidden;display:flex;flex-direction:column}
+.cdh{padding:10px 14px;font-weight:800;font-size:.85rem;color:#fff}
+.cdb{padding:12px 14px;display:grid;gap:8px;font-size:.82rem;color:var(--mut);align-content:start}
+.cdb input{width:100%;min-width:0;padding:9px 11px;border-radius:12px;border:1px solid var(--bd);background:#fff;color:var(--fg);font:inherit;font-size:.85rem}
+.pb{display:block;text-align:center;padding:9px;border:0;border-radius:12px;background:var(--ac);color:#fff;font-weight:700;font-size:.88rem;text-decoration:none}
+#profile{overflow:auto}
+.pfb{height:140px;flex:none;background:linear-gradient(135deg,#0e9f8e,#1f6fd1);position:relative;display:flex;align-items:flex-end;padding:18px 16px;color:#fff;font-weight:800;font-size:1.3rem}
+.pfb .back{position:absolute;top:max(12px,env(safe-area-inset-top,0px));left:12px}
+.pfh{display:flex;gap:14px;align-items:center;padding:16px;background:var(--card);border-bottom:1px solid var(--bd)}
+.pfh .avt{width:72px;height:72px;font-size:1.6rem}
+.pfh h2{font-size:1.1rem;overflow-wrap:anywhere}.pfh p{font-size:.85rem;color:var(--mut);overflow-wrap:anywhere}
+.pfl{width:100%;max-width:640px;margin:0 auto;padding-bottom:24px}
+.pst{display:grid;gap:8px;justify-items:start;padding:16px;border-bottom:1px solid var(--bd);font-size:.9rem}.pst b{font-size:.82rem;color:var(--mut)}
+.pr{display:flex;align-items:center;gap:14px;width:100%;padding:15px 16px;border:0;border-bottom:1px solid var(--bd);background:transparent;color:var(--fg);font:inherit;font-weight:600;text-align:left;cursor:pointer;list-style:none}
+.pr svg{width:22px;height:22px;color:var(--ac2);flex:none}
+summary.pr::-webkit-details-marker{display:none}
+.pr:focus-visible{outline:3px solid var(--ac2);outline-offset:-3px}
+.pt{padding:4px 16px 16px;font-size:.88rem;color:var(--mut);border-bottom:1px solid var(--bd)}.pt a{color:var(--ac);font-weight:700}
+</style>
+<style id="binus">
+:root,:root:not([data-theme="light"]),:root[data-theme="dark"]{--bg:#151922;--bg2:#1d222d;--fg:#f4f6fa;--mut:#a3acbb;--card:#2b2f3a;--bd:#3a3f4c;--ac:#f39c2b;--ac2:#2f9bf0;--onac:#fff;--stage:#1d222d;--bl:#2f9bf0;color-scheme:dark}
+body,#welcome{background:var(--bg)}
+.home{max-width:680px}
+.gr{font-size:1.05rem;color:var(--fg);font-weight:500}
+.gn{text-transform:uppercase;font-size:clamp(1.6rem,7vw,2.3rem);font-weight:800;letter-spacing:0}
+.pill{background:var(--card);border:0;border-radius:999px;padding:10px 16px}
+.pill i{background:linear-gradient(160deg,#4db3ff,#1769c4)}
+.avt{border:2px solid #3a3f4c;background:var(--card)}
+.svc{background:var(--card);border:0;border-radius:26px;padding:22px 8px;gap:18px 4px}
+.sv{color:var(--fg);font-weight:500;font-size:.78rem}
+.sv span{width:60px;height:60px;position:relative;box-shadow:0 6px 14px rgba(0,0,0,.35),inset 0 -4px 8px rgba(0,0,0,.25),inset 0 2px 3px rgba(255,255,255,.45);background:radial-gradient(120% 90% at 30% 12%,rgba(255,255,255,.5),rgba(255,255,255,0) 48%),linear-gradient(160deg,var(--c1),var(--c2))}
+.sv span::after{content:"";position:absolute;left:14%;right:14%;top:6%;height:38%;border-radius:50%;background:linear-gradient(rgba(255,255,255,.35),rgba(255,255,255,0))}
+.sv svg{position:relative;z-index:1;width:28px;height:28px}
+.lc{background:var(--card);border:2px solid #3a3f4c;border-radius:22px}
+.lch{background:#676767;color:#fff;text-transform:uppercase;letter-spacing:.02em;padding:12px 18px;font-size:.88rem}
+.lcb h3{font-size:1.5rem;font-weight:500}
+.lcb p{color:var(--fg);opacity:.85}
+.cd{background:var(--card);border:0;border-radius:22px}
+.cdh{padding:12px 16px;font-size:.88rem}
+.cdb{color:var(--fg)}
+.cdb input{background:#1d222d;color:var(--fg);border-color:var(--bd)}
+.pb{background:var(--ac);border-radius:14px;box-shadow:0 4px 10px rgba(243,156,43,.3)}
+.tile,.tp{background:var(--card);border-color:transparent;color:var(--fg)}
+.sec{color:var(--fg)}
+.t1{background:rgba(45,212,191,.18);color:#4fe0cf}.t2{background:rgba(255,194,74,.18);color:#ffc24a}.t3{background:rgba(255,107,107,.18);color:#ff8585}
+#nav{background:#1b1f29;border-color:#2c313d}
+#nav button{color:#d7dce6}
+#nav button.on{color:var(--bl)}
+@media(min-width:860px){#nav button.on{background:rgba(47,155,240,.16)}}
+#nav .lg{color:var(--fg)}
+.back,.seg,.opt,.tabs button,.gbtn{background:var(--card);color:var(--fg);border-color:var(--bd)}
+.opt.on,.tabs button.on{background:var(--ac);color:#fff}
+input[type=number],textarea,.kt{background:#1d222d;color:var(--fg);border-color:var(--bd)}
+.warn{background:rgba(243,156,43,.12);border-color:rgba(243,156,43,.4);color:#ffd9a0}
+.fc,#panel,.hl details{box-shadow:none;border-color:transparent}
+.b.a{border-color:transparent}
+#profile{background:var(--bg)}
+.pfb{height:210px;align-items:flex-start;justify-content:center;padding:0;background:
+ radial-gradient(circle at 12.5% 100%,rgba(255,255,255,.14) 0 34px,transparent 35px),
+ radial-gradient(circle at 37.5% 0,rgba(0,0,0,.12) 0 34px,transparent 35px),
+ radial-gradient(circle at 62.5% 100%,rgba(255,255,255,.14) 0 34px,transparent 35px),
+ radial-gradient(circle at 87.5% 0,rgba(0,0,0,.12) 0 34px,transparent 35px),
+ linear-gradient(180deg,#1b8fdc,#8cc9f0);background-size:160px 120px,160px 120px,160px 120px,160px 120px,100% 100%;background-repeat:repeat-x,repeat-x,repeat-x,repeat-x,no-repeat;background-position:0 40px,0 40px,0 40px,0 40px,0 0;position:relative}
+.pfb::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:12px;background:radial-gradient(circle at 12px 12px,transparent 11px,#fff 11.5px) 0 0/24px 12px repeat-x}
+.pfb .back{background:rgba(255,255,255,.92);color:#16324d;border:0;z-index:2}
+.pft1{position:absolute;top:max(22px,calc(env(safe-area-inset-top,0px) + 10px));left:64px;font-size:1.05rem;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.25)}
+.pft{position:absolute;left:0;right:0;top:48%;text-align:center;font-size:1.25rem;font-weight:600;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.2)}
+.pfh{background:#fff;color:#111;border-bottom:1px solid #d8dde4;padding:14px 18px;position:relative;gap:16px}
+.pfh::after{content:"";width:10px;height:10px;border-right:3px solid #8a93a0;border-top:3px solid #8a93a0;transform:rotate(45deg);margin-left:auto;margin-right:6px;flex:none}
+.pfh .avt{width:76px;height:76px;border:3px solid #2f9bf0;background:#e8f2fb;color:#1769c4}
+.pfh .avt svg{color:#7a93ad}
+.pfi{min-width:0}
+.pfh h2{color:#111;font-size:1.15rem;font-weight:800;text-transform:uppercase;line-height:1.2}
+.pfh p{color:#4b5563;font-size:.88rem}
+.pfv{display:block;color:#8a93a0;font-size:.9rem;margin-top:2px}
+.pfl{max-width:680px;padding:16px 14px 32px;display:grid;gap:14px}
+.pst{background:var(--card);border:0;border-radius:20px;padding:16px 18px;gap:10px;font-size:.95rem;justify-items:start}
+.pst b{color:var(--mut);font-size:.75rem;letter-spacing:.08em}
+.pst>span:first-of-type{font-weight:700;font-size:1rem;color:var(--fg)}
+.pst .gbtn{background:#fff;color:#1b2533;border:0;border-radius:12px;padding:10px 18px;font-weight:700}
+.pg2{background:var(--card);border-radius:20px;overflow:hidden}
+.pg2 .pr,.pg2 summary.pr{padding:17px 18px;border-bottom:1px solid rgba(255,255,255,.07);font-size:1.02rem;font-weight:500;gap:16px;position:relative}
+.pg2 .pr svg{width:26px;height:26px;color:#fff;stroke-width:2}
+.pg2 .pr::after{content:"";margin-left:auto;width:9px;height:9px;border-right:2.5px solid #8d96a6;border-top:2.5px solid #8d96a6;transform:rotate(45deg);flex:none;margin-right:4px;transition:transform .2s}
+.pg2 details[open]>summary.pr::after{transform:rotate(135deg)}
+.pg2 .pd:last-child .pr,.pg2>.pr:last-child{border-bottom:0}
+.pg2 details[open]>summary.pr{border-bottom:0}
+.pg2 .pr:active,.pg2 summary.pr:active{background:rgba(255,255,255,.05)}
+.pg2 .pt{background:#232731;border-bottom:1px solid rgba(255,255,255,.07);padding:4px 18px 16px 60px;color:var(--mut);line-height:1.55;font-size:.88rem}
+.pg2 .pt a{color:var(--bl)}
+.pg2 .pd:last-child .pt{border-bottom:0}
+.pg2 .dng,.pg2 .dng svg{color:#ff7b72}
+.pg2 .dng::after{display:none}
+@media(max-width:700px){.pfb{height:190px}}
+</style>
+<style id="fitur2">
+.scr{top:0!important;bottom:0!important}
+.al{border-radius:22px;background:var(--card)}
+.alh{padding:14px 18px;font-weight:800;color:#fff;background:#e8890c;border-radius:22px 22px 0 0}
+.pg{display:flex!important;flex-direction:column;gap:14px}.pg>*{flex:none}
+.al.emg .alh{background:#d62f2f}
+.alb{padding:14px 18px 18px;display:grid;gap:14px}
+.alw{font-size:.9rem;color:var(--mut)}
+.alact{display:grid;gap:8px}
+.aldet{display:grid;gap:14px}.aldet>summary{cursor:pointer;font-weight:700;font-size:.9rem;padding:4px 0;color:inherit}
+.alact .pb.red{background:#d62f2f;box-shadow:none}
+.als b{display:block;font-size:.85rem;color:var(--mut);margin-bottom:4px;letter-spacing:.02em}
+.als ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:.92rem}
+.lch.bad{background:#d62f2f}.lch.ok{background:#2f9e57}
+.lbad{color:#ff9a93!important;font-weight:600}
+.chk{display:flex;gap:10px;align-items:flex-start;margin-top:14px;font-size:.85rem;color:var(--mut)}
+.chk input{margin-top:3px;accent-color:var(--ac)}
+select{background:#1d222d;color:var(--fg)}
+.pgerr{border:1px solid rgba(255,107,107,.5)}.pgerr b{color:#ff8585}.pgerr p{margin-top:4px;font-size:.92rem}
+.pgs2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.stt{background:#232731;border-radius:14px;padding:10px 12px;display:grid;gap:2px}
+.stt span{font-size:.75rem;color:var(--mut)}.stt b{font-size:.95rem}
+.pgbar{height:10px;border-radius:99px;background:#1d222d;margin-top:12px;overflow:hidden}
+.pgbar i{display:block;height:100%;background:linear-gradient(90deg,#2f9bf0,#4fe0cf);border-radius:99px}
+.tk{display:flex;align-items:center;gap:14px;width:100%;text-align:left;margin-top:10px;padding:14px;border:0;border-radius:16px;background:#232731;color:var(--fg);font:inherit;font-size:.95rem}
+.tk i{flex:none;width:26px;height:26px;border-radius:50%;border:2px solid #6b7384;display:grid;place-items:center}
+.tk.on{opacity:.75}.tk.on span{text-decoration:line-through}
+.tk.on i{background:#2f9e57;border-color:#2f9e57}
+.tk.on i::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.pgok{margin-top:12px;color:#6bd18a;font-weight:600;font-size:.92rem}
+.pgwarn{margin-top:8px;color:#ffc24a;font-size:.88rem}
+</style>
+<style id="akun-polos">
+#profile .pfb{height:auto;display:flex;align-items:center;gap:12px;padding:12px 16px;background:none;color:var(--fg)}
+#profile .pfb::after{display:none}
+#profile .pfb .back{position:static;background:var(--card);color:var(--fg);border:1px solid var(--bd)}
+#profile .pft1{position:static;font-size:1.2rem;font-weight:700;color:var(--fg);text-shadow:none;margin:0}
+#profile .pfh{background:var(--card);color:var(--fg);border:0;border-radius:20px;margin:0 14px;padding:16px 18px}
+#profile .pfh::after{border-color:#8d96a6}
+#profile .pfh h2{color:var(--fg);text-transform:none;font-weight:800}
+#profile .pfh p{color:var(--mut)}
+#profile .pfv{color:var(--mut)}
+#profile .pfh .avt{border-color:var(--ac2)}
+#profile .pfb{justify-content:flex-start}
+#profile .pfh p{overflow-wrap:break-word;word-break:normal;font-size:.8rem}
+#profile .pfl{padding-top:14px}
+.tsq{width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--bd);background:#1d222d;color:var(--fg);font:inherit;font-size:.95rem}
+#tcats{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+#tcats::-webkit-scrollbar{display:none}
+#tcats .opt{white-space:nowrap}
+#tlist{display:grid;gap:10px}
+.tfc{border-radius:22px;background:var(--card);overflow:hidden}
+.tfh{padding:12px 18px;background:#2f9e57;color:#fff;font-weight:800;font-size:.88rem;text-transform:uppercase;letter-spacing:.02em}
+.tfb{padding:12px;display:grid;gap:10px}
+.tfw{font-size:.8rem;color:var(--mut);padding:0 4px}
+.tcd{background:var(--card);border-radius:18px;border:1px solid var(--bd);overflow:hidden}
+.tfb .tcd{background:rgba(127,127,127,.12);border-color:transparent}
+.tcd summary{list-style:none;display:flex;gap:12px;align-items:center;padding:14px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.tcd summary::-webkit-details-marker{display:none}
+.tcd .ci{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:var(--k);background:var(--kb)}
+.tcd .ci svg{width:22px;height:22px}
+.tcd .tx{flex:1;min-width:0}
+.tcd .tx b{display:block;font-size:.95rem}
+.tcd .tx span{display:block;font-size:.82rem;color:var(--mut);margin-top:2px}
+.tcd .tx .why{color:#ffc24a;font-weight:600}
+.tcd .chv{flex:none;color:var(--mut);transition:transform .2s;display:grid}
+.tcd[open] .chv{transform:rotate(180deg)}
+.tcd .tb2{padding:0 14px 14px;display:grid;gap:12px;font-size:.9rem}
+.tcd ol{margin:0;padding-left:20px;display:grid;gap:6px}
+.tcd .dr{padding:10px 12px;border-radius:12px;background:rgba(255,194,74,.12);color:#ffd9a0;font-size:.85rem;line-height:1.45}
+.tcd.w{border-left:4px solid #d62f2f}
+.tcd.w .dr{background:rgba(214,47,47,.14);color:#ffb4ae}
+.tcd .tcn{display:flex;gap:8px;flex-wrap:wrap}
+.tcd .tcn>*{flex:1 1 140px;margin:0;width:auto}
+.tcd .pb.red{background:#d62f2f;box-shadow:none}
+button.tp{width:100%;text-align:left;font:inherit;color:inherit;border:0;cursor:pointer}
+.ti.kk{color:var(--k);background:var(--kb)}
+.hd .sec{margin:0}
+#profile .pfb{width:100%;max-width:680px;margin:0 auto;padding:12px 14px}
+#profile .pfh{width:calc(100% - 28px);max-width:652px;margin:0 auto}
+#profile .pfh::after{display:none}
+.pg2 summary.pr::after{transform:rotate(135deg);margin-top:-3px}
+.pg2 details[open]>summary.pr::after{transform:rotate(-45deg);margin-top:3px}
+.lch.wait{background:#e8890c}
+.stp{display:flex;align-items:center;gap:12px;margin-top:6px}
+.stp button{width:42px;height:42px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--fg);font-size:1.3rem;font-weight:700;cursor:pointer}
+.stp b{min-width:2.2ch;text-align:center;font-size:1.15rem}
+.dwk{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:14px;text-align:center}
+.dday{display:grid;gap:5px;justify-items:center;font-size:.7rem;color:var(--mut);padding:8px 0;border-radius:12px}
+.dday.now{background:rgba(127,127,127,.14)}
+.dday b{color:var(--fg);font-size:.75rem;text-transform:capitalize}
+.dday .dt{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#10201a;font-size:.78rem;background:rgba(127,127,127,.28)}
+.dday .sb{height:56px;width:14px;border-radius:7px;background:rgba(127,127,127,.18);display:flex;align-items:flex-end;overflow:hidden}
+.dday .sb i{display:block;width:100%;background:linear-gradient(#4fe0cf,#2f9bf0);border-radius:7px}
+.dins{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;padding:12px 0;border-top:1px solid var(--bd);font-size:.9rem}
+.dins:first-child{border-top:0}
+.dins .lnk{flex:none;white-space:nowrap}
+#dins .ask{margin-top:12px}
+.dhai{margin-top:4px}.dhai summary{cursor:pointer;font-size:.85rem;font-weight:700;color:var(--ac)}.dhai p{margin-top:6px}
+.dait{white-space:pre-wrap;font-size:.92rem;line-height:1.55;color:var(--fg)}
+</style>
+
+<style id="artcss">
+.sevw{border:2px solid #ff6b6b;background:rgba(255,107,107,.12);border-radius:16px;padding:12px 14px;margin:0 0 12px}
+.sevw b{display:block;color:#ff8a8a;margin-bottom:4px}.sevw p{margin:0;font-size:.86rem;line-height:1.45}
+.arc{display:flex;flex-direction:column;gap:6px;text-align:left;width:100%;font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:12px 14px;cursor:pointer}
+.arc:hover{border-color:var(--k,var(--ac))}
+.arc .ak{align-self:flex-start;font-size:.68rem;font-weight:700;letter-spacing:.02em;padding:2px 9px;border-radius:99px;color:var(--k);background:var(--kb)}
+.arc b{font-size:.92rem;line-height:1.3}.arc span.as{font-size:.8rem;color:var(--mut);line-height:1.4}
+.rail{display:none}
+.artm{display:grid;gap:10px}
+.artm .hd{margin:0}
+.arow{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 2px 10px;margin:0 -16px;padding-left:16px;padding-right:16px;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+.arow .arc{flex:0 0 min(260px,78%);scroll-snap-align:start}
+@media(min-width:1260px){
+  .artm{display:none}
+  .rail{display:flex;flex-direction:column;position:fixed;top:88px;bottom:20px;width:264px;z-index:2}
+  .rail.rl{left:calc(50% - 340px - 24px - 264px)}.rail.rr{left:calc(50% + 340px + 24px)}
+  .rail h3{margin:0 0 10px;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+  .rail .rv{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;-webkit-mask-image:linear-gradient(transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(transparent,#000 6%,#000 94%,transparent)}
+  .rail .rv::-webkit-scrollbar{display:none}
+  .rail .rt{display:flex;flex-direction:column;gap:12px;padding-bottom:12px}
+}
+#profile .pfb{max-width:none;margin:0;padding:12px 16px}
+@media(max-width:560px){
+  .svc{grid-template-columns:repeat(3,1fr);padding:18px 4px;gap:16px 2px}
+  .sv span{width:56px;height:56px}
+  .duo{grid-template-columns:1fr}
+  .gn{font-size:clamp(1.5rem,8vw,2rem)}
+  .hd{flex-wrap:wrap;gap:4px}
+}
+</style>
+</head>
+<body>
+
+<section id="welcome" class="scr on">
+  <aside class="rail rl" aria-label="Artikel kesehatan"><h3>Artikel kesehatan</h3><div class="rv" id="rvl"><div class="rt" id="rtl"></div></div></aside>
+  <aside class="rail rr" aria-label="Artikel kesehatan lainnya"><h3>Bacaan untukmu</h3><div class="rv" id="rvr"><div class="rt" id="rtr"></div></div></aside>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-body" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><path d="M12 8v7m-4-5h8m-6 11 2-6 2 6"/></symbol>
+<symbol id="i-note" viewBox="0 0 24 24"><path d="M9 4h6v3H9z"/><path d="M8 5H6a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><path d="M8 13h8M8 17h5"/></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
+<symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></symbol>
+<symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></symbol>
+<symbol id="i-out" viewBox="0 0 24 24"><path d="M10 4H5v16h5M15 8l4 4-4 4M19 12H9"/></symbol>
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M3 12h4l2-6 4 12 2-6h6"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></symbol>
+</defs></svg>
+  <div class="home">
+    <div class="tb">
+      <div class="pill"><img class="lg" src="logo-mark.png" alt="Logo SobatSehat" width="36" height="36"><div><b>SobatSehat</b><small>Kenali tubuh, catat kondisi</small></div></div>
+      <button type="button" class="avt" id="avt" aria-label="Akun saya"><svg><use href="#i-user"/></svg></button>
+    </div>
+    <div><p class="gr" id="gtime">Selamat pagi,</p><h1 class="gn" id="gname">Sobat Sehat</h1></div>
+    <div class="svc">
+      <button type="button" class="sv" id="go" style="--c1:#4aa8ff;--c2:#1f6fd1"><span><svg><use href="#i-body"/></svg></span>Jelajah Tubuh</button>
+      <button type="button" class="sv" id="go2" style="--c1:#ff9a5c;--c2:#e8412f"><span><svg><use href="#i-note"/></svg></span>Catat Kondisi</button>
+      <button type="button" class="sv" id="go8" style="--c1:#f472b6;--c2:#c026d3"><span><svg><use href="#i-heart"/></svg></span>Pantau Harian</button>
+      <button type="button" class="sv" id="go3" style="--c1:#2dd4bf;--c2:#0e7c70"><span><svg><use href="#i-chat"/></svg></span>Konsul AI</button>
+      <button type="button" class="sv" id="go4" style="--c1:#a78bfa;--c2:#6d4fd6"><span><svg><use href="#i-clock"/></svg></span>Riwayat Chat</button>
+      <a class="sv" href="tel:112" style="--c1:#ff6b6b;--c2:#d62f2f"><span><svg><use href="#i-phone"/></svg></span>Darurat 112</a>
+      <button type="button" class="sv" id="go6" style="--c1:#ffc24a;--c2:#e8890c"><span><svg><use href="#i-bulb"/></svg></span>Tips Sehat</button>
+      <button type="button" class="sv" id="go5" style="--c1:#6bd18a;--c2:#2f9e57"><span><svg><use href="#i-check"/></svg></span>Program Sehat</button>
+      <button type="button" class="sv" id="go7" style="--c1:#9aa6b5;--c2:#667385"><span><svg><use href="#i-user"/></svg></span>Akun Saya</button>
+    </div>
+    <button type="button" class="lc" id="dayc"></button>
+    <button type="button" class="lc" id="pgc"></button>
+    <button type="button" class="lc" id="lastc"></button>
+    <div class="duo">
+      <div class="cd"><div class="cdh" style="background:var(--ac)">Tanya AI</div><div class="cdb"><p>Ceritakan keluhan ringan kamu.</p><input id="hq" placeholder="Contoh: sakit kepala sejak pagi" aria-label="Tanya AI"><button type="button" id="hgo" class="pb">Tanya</button></div></div>
+      <div class="cd"><div class="cdh" style="background:#d62f2f">Butuh bantuan darurat?</div><div class="cdb"><p>Nyeri dada, sesak berat, atau pingsan? Segera hubungi.</p><a class="pb" href="tel:112">Hubungi 112</a><a class="pb" href="tel:119">Hubungi 119</a></div></div>
+    </div>
+    <div class="artm" id="artm"><div class="hd"><h2 class="sec">Artikel kesehatan</h2></div><div class="arow" id="arow"></div></div>
+    <div class="hd"><h2 class="sec" id="tipsh">Tips sehat hari ini</h2><button type="button" class="lnk" id="tipsall">Lihat semua</button></div>
+    <div class="tips" id="tipsl"></div>
+    <p class="note">Konten bersifat edukasi umum dan bukan pengganti saran dokter.</p>
+  </div>
+</section>
+<section id="profile" class="scr">
+  <div class="pfb"><button type="button" class="back bk" aria-label="Kembali"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button><h2 class="pft1">Akun saya</h2></div>
+  <div class="pfh"><div class="avt" id="pfa"></div><div class="pfi"><h2 id="pfn">Belum masuk</h2><p id="pfe"></p><span class="pfv">Akun SobatSehat</span></div></div>
+  <div class="pfl">
+    <div class="pst"><b>STATUS DATA</b><span id="pfs"></span><button type="button" class="gbtn" id="pfin">Masuk dengan Google</button><span class="tag" id="pfm"></span></div>
+    <div class="pg2"><button type="button" class="pr" id="pfch"><svg><use href="#i-clock"/></svg>Riwayat chat</button>
+    <button type="button" class="pr" id="pflg"><svg><use href="#i-note"/></svg>Catatan kondisi</button></div>
+    <div class="pg2"><details class="pd"><summary class="pr"><svg><use href="#i-shield"/></svg>Kebijakan privasi</summary><div class="pt">Catatan kondisi (termasuk check-in harian) dan riwayat chat disimpan di perangkat ini. Program Sehat (data berat badan dan checklist) juga disimpan di perangkat ini. Jika kamu masuk dengan Google, ketiganya juga disimpan di akunmu (Firebase, layanan Google) agar bisa dibuka di perangkat lain, dan hanya akunmu yang dapat membacanya. Pesan di Konsul AI dan isian check-in harian yang diminta masukannya diproses oleh Google Gemini. Pada paket gratis, isinya dapat dipakai Google untuk memperbaiki produknya dan dapat dibaca peninjau manusia, jadi jangan menulis data sensitif seperti nama lengkap, alamat, atau nomor identitas. Kamu dapat menghapus data kapan saja lewat Riwayat chat, Catatan kondisi, atau "Hapus semua data saya".</div></details>
+    <details class="pd"><summary class="pr"><svg><use href="#i-doc"/></svg>Syarat dan ketentuan</summary><div class="pt">SobatSehat memberi informasi edukasi umum dan saran ringan. Layanan ini bukan layanan medis, tidak memberi diagnosis, dan tidak menggantikan dokter. Jangan menunda ke fasilitas kesehatan karena jawaban AI, terutama bila ada tanda bahaya.</div></details>
+    <details class="pd"><summary class="pr"><svg><use href="#i-help"/></svg>Bantuan darurat</summary><div class="pt">Darurat: <a href="tel:112">112</a>. Layanan gawat darurat medis: <a href="tel:119">119</a>. Tanda bahaya: nyeri dada, sesak berat, pingsan, lemah satu sisi tubuh, bicara pelo, perdarahan hebat, atau keinginan menyakiti diri.</div></details>
+    </div>
+    <div class="pg2"><button type="button" class="pr dng" id="pfdel"><svg><use href="#i-trash"/></svg>Hapus semua data saya</button>
+    <button type="button" class="pr dng" id="pfout"><svg><use href="#i-out"/></svg>Keluar</button></div>
+  </div>
+</section>
+
+<section id="explore" class="scr">
+  <div class="bar"><button class="back" id="back" aria-label="Kembali ke menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button><h2>Anatomi tubuh<small>Struktur · Fungsi · Pemahaman</small></h2><div class="seg" role="group" aria-label="Pilih model tubuh"><button class="on" data-m="pria">Pria</button><button data-m="wanita">Wanita</button><button data-m="anak">Anak</button></div></div>
+  <div class="main">
+    <div class="left"><div id="chips"></div><div id="stage"><div class="zoom"><button data-z="1" aria-label="Perbesar">+</button><button data-z="-1" aria-label="Perkecil">&minus;</button><button data-z="0" aria-label="Reset tampilan">&#8634;</button></div><div class="hint">Seret untuk memutar, scroll atau cubit untuk zoom</div></div></div>
+    <aside id="panel" aria-live="polite"></aside>
+  </div>
+</section>
+
+<section id="log" class="scr">
+  <div class="bar"><button class="back bk" aria-label="Kembali ke menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button><h2>Catat kondisi saya<small>Tersimpan di perangkat, dan di akunmu bila login</small></h2></div>
+  <div class="pg">
+    <div id="alert" hidden></div>
+    <div class="fc">
+      <h3>Bagaimana kondisimu hari ini?</h3>
+      <div class="lbl">Suasana hati</div><div class="opts" id="moods"></div>
+      <div class="lbl">Keluhan (boleh lebih dari satu)</div><div class="opts" id="syms"></div>
+      <div class="row">
+        <label class="f"><span>Tingkat keluhan: <span id="sv">0</span>/10</span><input type="range" id="sev" min="0" max="10" value="0"></label>
+        <label class="f">Tidur semalam (jam)<input type="number" id="slp" min="0" max="24" step="0.5"></label>
+        <label class="f">Suhu tubuh (&deg;C)<input type="number" id="tmp" min="34" max="43" step="0.1"></label>
+      </div>
+      <label class="f" style="margin-top:12px">Catatan<textarea id="note" rows="2" placeholder="Misalnya: sakit kepala sejak pagi, sudah minum air putih"></textarea></label>
+      <div class="acts"><button class="big sm" id="save">Simpan catatan</button><span class="tag" id="saved"></span></div>
+    </div>
+    <div class="fc">
+      <div class="hd"><h3>Riwayat</h3><button class="lnk" id="clr">Hapus semua</button></div>
+      <div id="hist"></div>
+      <div class="acts"><button class="big sm" id="toAi">Konsul AI dengan catatan terakhir</button></div>
+    </div>
+  </div>
+</section>
+
+<section id="chat" class="scr">
+  <div class="bar"><button class="back bk" aria-label="Kembali ke menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button><h2>Konsul ringan dengan AI<small>Bukan pengganti dokter</small></h2><div class="rg"><button class="rh" id="newc">Chat baru</button><button class="rh" id="hgoc">Riwayat</button></div></div>
+  <div class="warn">Untuk edukasi dan saran ringan. Pesanmu diproses oleh Google Gemini. Jika ada nyeri dada, sesak berat, pingsan, atau kondisi darurat, segera ke IGD atau hubungi 112 / 119.</div>
+  <label class="ctx"><input type="checkbox" id="useLog" checked> Sertakan catatan kondisi terakhir</label>
+  <div class="msgs" id="msgs" aria-live="polite"></div>
+  <div class="qp" id="qp"></div>
+  <div class="inp"><textarea id="q" rows="1" placeholder="Tulis keluhan atau pertanyaanmu"></textarea><button class="sendb" id="send">Kirim</button></div>
+</section>
+
+<section id="tipsc" class="scr">
+  <div class="bar"><button type="button" class="back bk" aria-label="Kembali ke menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button><h2>Tips sehat<small>Praktis dan bisa langsung dipakai</small></h2></div>
+  <div class="pg">
+    <input id="tsq" class="tsq" type="search" placeholder="Cari tips, misalnya demam atau tidur" aria-label="Cari tips">
+    <div class="opts" id="tcats"></div>
+    <div id="tfor"></div>
+    <div id="tlist"></div>
+    <p class="note" style="margin-top:6px">Informasi umum untuk edukasi, bukan pengganti saran dokter. Untuk obat, baca label atau tanya apoteker. Darurat: hubungi 112 atau 119.</p>
+  </div>
+</section>
+
+<section id="daily" class="scr">
+  <div class="bar"><button type="button" class="back bk" aria-label="Kembali ke menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button><h2>Pantau harian<small>Perasaan dan kesehatan mental, 1 menit sehari</small></h2></div>
+  <div class="pg">
+    <div id="dalert" hidden></div>
+    <div class="tfc" id="dai" style="display:none"></div>
+    <div class="fc">
+      <div class="hd"><h3 id="dtitle">Check-in hari ini</h3><span class="tag" id="ddate"></span></div>
+      <div class="lbl">Suasana hati</div><div class="opts" id="dmoods"></div>
+      <div class="lbl">Perasaan yang muncul hari ini (boleh lebih dari satu)</div><div class="opts" id="dfeel"></div>
+      <div class="lbl">Tingkat stres</div><div class="opts" id="dstr"></div>
+      <div class="lbl">Tingkat energi</div><div class="opts" id="dene"></div>
+      <div class="lbl">Interaksi dengan orang lain hari ini</div><div class="opts" id="dsoc"></div>
+      <div class="lbl">Aktivitas fisik hari ini (membantu suasana hati)</div><div class="opts" id="dacts"></div>
+      <label class="f" style="margin-top:12px">Tidur semalam (jam)<input type="number" id="dslp" min="0" max="24" step="0.5"></label>
+      <label class="f" style="margin-top:12px">Tulis bebas<textarea id="dnote" rows="3" placeholder="Misalnya: hari ini kerjaan menumpuk, tapi ngobrol dengan teman sore tadi bikin lega"></textarea></label>
+      <div class="acts"><button type="button" class="big sm" id="dsave">Simpan check-in</button><span class="tag" id="dsaved"></span></div>
+      <p class="tag" style="margin-top:10px">Setelah disimpan, AI memberi masukan singkat dari isianmu. Ini untuk refleksi diri dan bukan diagnosis atau pengganti psikolog. Isianmu diproses oleh Google Gemini, jadi jangan menulis data sensitif seperti nama lengkap atau alamat.</p>
+    </div>
+    <div class="fc">
+      <h3>Ringkasan 7 hari</h3>
+      <div class="pgs2" id="dstats"></div>
+      <div class="dwk" id="dweek"></div>
+      <p class="tag" style="margin-top:10px">Lingkaran: suasana hati (1 buruk, 5 sangat baik). Batang: jam tidur. Angka bawah batang: jam tidur dan tingkat stres (S1 tenang sampai S5 sangat tinggi).</p>
+    </div>
+    <div class="fc">
+      <h3>Yang bisa diperhatikan</h3>
+      <div id="dins"></div>
+    </div>
+    <div class="fc">
+      <div class="hd"><h3>Riwayat check-in</h3><button type="button" class="lnk" id="dclr">Hapus semua</button></div>
+      <div id="dhistl"></div>
+    </div>
+  </div>
+</section>
+
+<section id="prog" class="scr">
+  <div class="bar"><button class="back bk" aria-label="Kembali ke menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button><h2>Program Sehat<small>Asisten menuju berat badan normal</small></h2></div>
+  <div class="pg" id="pgbody"></div>
+</section>
+<section id="hchat" class="scr">
+  <div class="bar"><button class="back" id="hcb" aria-label="Kembali"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button><h2>Riwayat chat<small>Tersimpan di perangkat, dan di akunmu bila login</small></h2><button class="rh" id="hcc">Hapus semua</button></div>
+  <div class="hl" id="hl"></div>
+</section>
+<svg id="lines"><line id="ln"/><circle id="c1" r="15" fill="none" stroke-width="2"/><circle id="c2" r="5"/><circle id="c3" r="5" fill="var(--ac)"/></svg>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const ORG=[
+{id:'otak',n:'Otak',z:'Sistem saraf',k:'#c9a0ff',f:'Pusat kendali tubuh. Mengatur pikiran, ingatan, emosi, gerakan, dan semua fungsi vital.',t:'Beratnya hanya sekitar 2% dari berat badan, tetapi memakai sekitar 20% energi tubuh.',h:'Tidur 7-9 jam, rutin bergerak, dan tetap belajar hal baru.'},
+{id:'trakea',n:'Trakea',z:'Pernapasan',k:'#bcd3e6',f:'Saluran udara dari tenggorokan ke paru-paru. Dindingnya berlapis rambut halus dan lendir yang menyaring debu.',t:'Panjangnya sekitar 10-12 cm pada orang dewasa.',h:'Hindari asap rokok dan polusi agar saluran napas tetap bersih.'},
+{id:'paru',n:'Paru-paru',z:'Pernapasan',k:'#ff9fb2',f:'Memasukkan oksigen ke darah dan membuang karbon dioksida saat kamu bernapas.',t:'Orang dewasa bernapas sekitar 12-20 kali per menit saat istirahat.',h:'Olahraga aerobik teratur, jangan merokok, dan pakai masker saat udara berpolusi.'},
+{id:'jantung',n:'Jantung',z:'Peredaran darah',k:'#e5384f',f:'Memompa darah kaya oksigen ke seluruh tubuh tanpa henti.',t:'Jantung berdetak sekitar 100.000 kali dalam sehari.',h:'Kurangi garam dan gorengan, dan bergerak aktif minimal 150 menit per minggu.'},
+{id:'hati',n:'Hati',z:'Pencernaan dan metabolisme',k:'#b5623a',f:'Menyaring racun dari darah, membuat empedu, dan menyimpan cadangan energi.',t:'Hati bisa tumbuh kembali setelah sebagian jaringannya rusak.',h:'Batasi alkohol, jaga berat badan, dan lengkapi vaksin hepatitis.'},
+{id:'lambung',n:'Lambung',z:'Pencernaan',k:'#f0a35e',f:'Mengaduk makanan dengan asam dan enzim menjadi bubur halus sebelum masuk ke usus.',t:'Lapisan lendir di dinding lambung terus diperbarui agar tidak tercerna oleh asamnya sendiri.',h:'Makan teratur dan jangan telat makan, terutama bila lambungmu sensitif.'},
+{id:'usus',n:'Usus halus',z:'Pencernaan',k:'#f4c07a',f:'Menyerap sebagian besar nutrisi dari makanan ke dalam darah.',t:'Jika diluruskan, panjangnya bisa sekitar 6-7 meter.',h:'Perbanyak serat dari sayur, buah, dan biji-bijian, serta minum air yang cukup.'},
+{id:'kolon',n:'Usus besar',z:'Pencernaan',k:'#d98f6c',f:'Menyerap air dan mineral dari sisa makanan, lalu membentuk dan menyimpan tinja sebelum dibuang.',t:'Dihuni triliunan bakteri baik yang membantu pencernaan dan kekebalan tubuh.',h:'Cukupi serat dan air agar buang air besar lancar.'},
+{id:'kerongkongan',n:'Kerongkongan',z:'Pencernaan',k:'#d9818f',f:'Saluran otot yang mendorong makanan dari mulut ke lambung lewat gerakan menelan.',t:'Panjangnya sekitar 25 cm, dan makanan didorong oleh otot, bukan hanya gravitasi.',h:'Hindari makan terlalu dekat waktu tidur agar asam lambung tidak naik.'},
+{id:'limpa',n:'Limpa',z:'Kekebalan dan darah',k:'#9c3f6e',f:'Menyaring darah, menghancurkan sel darah merah tua, dan membantu tubuh melawan infeksi.',t:'Ukurannya sebesar kepalan tangan, dan tubuh tetap bisa hidup tanpa limpa.',h:'Lengkapi vaksinasi dan lindungi perut kiri atas dari benturan keras.'},
+{id:'pankreas',n:'Pankreas',z:'Pencernaan dan hormon',k:'#f2bd62',f:'Menghasilkan enzim pencernaan dan hormon insulin yang mengatur kadar gula darah.',t:'Letaknya di belakang lambung dan bentuknya memanjang.',h:'Batasi gula dan minuman manis agar gula darah stabil.'},
+{id:'ginjal',n:'Ginjal',z:'Pembuangan limbah',k:'#c4455a',f:'Menyaring darah, membuang limbah lewat urine, dan menjaga keseimbangan cairan serta garam.',t:'Ginjal terletak di bagian belakang perut. Putar model untuk melihatnya.',h:'Minum air putih cukup dan batasi garam berlebih.',back:1},
+{id:'kandung',n:'Kandung kemih',z:'Pembuangan limbah',k:'#f2d25b',f:'Menampung urine sementara sebelum dikeluarkan dari tubuh.',t:'Bisa menampung sekitar 400-500 ml sebelum terasa sangat penuh.',h:'Jangan menahan buang air kecil terlalu lama.'}
+];
+const DZ={"otak":[["Stroke","Aliran darah ke otak tersumbat atau pembuluh darah pecah"],["Migrain","Sakit kepala berdenyut, sering disertai mual dan peka cahaya"],["Sakit kepala tegang","Nyeri seperti diikat di kepala, sering karena stres"],["Epilepsi","Kejang berulang akibat gangguan aktivitas listrik otak"],["Meningitis","Radang selaput otak, bisa sangat berbahaya"],["Ensefalitis","Radang jaringan otak, umumnya akibat infeksi virus"],["Demensia dan Alzheimer","Penurunan daya ingat dan berpikir secara bertahap"],["Penyakit Parkinson","Tremor, kaku, dan gerakan melambat"],["Cedera kepala dan gegar otak","Akibat benturan, bisa menimbulkan pusing dan muntah"],["Tumor otak","Pertumbuhan sel abnormal di otak, jinak maupun ganas"],["Hidrosefalus","Cairan otak menumpuk dan menekan jaringan otak"],["Neuralgia trigeminal","Nyeri tajam seperti tersengat di wajah"]],"trakea":[["Trakeitis","Radang trakea, biasanya infeksi bakteri setelah flu"],["Croup","Infeksi virus pada anak dengan batuk menggonggong"],["Stenosis trakea","Penyempitan saluran, menimbulkan napas berbunyi"],["Trakeomalasia","Dinding trakea lemah sehingga mudah menyempit"],["Sumbatan benda asing","Makanan atau benda kecil tersangkut, darurat"],["Cedera trakea","Akibat trauma leher atau pemasangan selang napas"],["Fistula trakeoesofagus","Saluran abnormal antara trakea dan kerongkongan"],["Tumor trakea","Jarang terjadi, bisa jinak atau ganas"],["Penekanan dari luar","Misalnya oleh gondok besar atau massa di dada"]],"paru":[["Pneumonia","Infeksi kantung udara paru, batuk dan demam"],["Tuberkulosis (TBC)","Infeksi bakteri, batuk lebih dari 2 minggu"],["Asma","Saluran napas menyempit dan sensitif, napas berbunyi"],["PPOK","Penyakit paru obstruktif kronis, sering akibat rokok"],["Bronkitis","Radang saluran napas besar, batuk berdahak"],["Influenza dan COVID-19","Infeksi virus pada saluran napas"],["Kanker paru","Pertumbuhan sel ganas, risiko tinggi pada perokok"],["Efusi pleura","Cairan menumpuk di selaput paru"],["Pneumotoraks","Udara bocor ke rongga dada hingga paru mengempis"],["Emboli paru","Gumpalan darah menyumbat pembuluh paru, darurat"],["Fibrosis paru","Jaringan paru mengeras dan sulit mengembang"],["Edema paru","Cairan menumpuk di paru, sering karena gagal jantung"],["Bronkiektasis","Saluran napas melebar permanen dan mudah infeksi"],["Silikosis dan pneumokoniosis","Kerusakan paru akibat debu kerja"]],"jantung":[["Penyakit jantung koroner","Pembuluh jantung menyempit karena plak"],["Serangan jantung","Pembuluh jantung tersumbat mendadak, darurat"],["Gagal jantung","Jantung lemah memompa darah ke seluruh tubuh"],["Aritmia","Irama detak tidak teratur, termasuk fibrilasi atrium"],["Hipertensi","Tekanan darah tinggi, memperberat kerja jantung"],["Kardiomiopati","Otot jantung menebal, melebar, atau kaku"],["Penyakit katup jantung","Katup bocor atau menyempit"],["Endokarditis","Infeksi lapisan dalam jantung dan katup"],["Miokarditis","Radang otot jantung, sering akibat virus"],["Perikarditis","Radang selaput pembungkus jantung"],["Penyakit jantung bawaan","Kelainan struktur jantung sejak lahir"],["Demam rematik","Komplikasi infeksi tenggorokan yang bisa merusak katup"],["Henti jantung","Jantung berhenti berdetak tiba-tiba, darurat"]],"hati":[["Hepatitis A","Infeksi virus lewat makanan atau air tercemar"],["Hepatitis B","Infeksi virus lewat darah dan cairan tubuh"],["Hepatitis C","Infeksi virus lewat darah, bisa menahun"],["Perlemakan hati","Lemak menumpuk di hati, terkait obesitas dan gula darah"],["Hepatitis alkoholik","Radang hati akibat alkohol berlebihan"],["Sirosis","Jaringan hati mengeras dan berparut permanen"],["Kanker hati","Sering berkembang dari hepatitis B/C atau sirosis"],["Gagal hati","Fungsi hati menurun berat, kulit dan mata menguning"],["Sakit kuning (ikterus)","Kulit dan mata kuning akibat bilirubin tinggi"],["Abses hati","Kantung nanah akibat infeksi"],["Hemokromatosis","Penumpukan zat besi berlebih di hati"],["Penyakit Wilson","Penumpukan tembaga akibat kelainan genetik"],["Cedera hati akibat obat","Kerusakan hati karena obat atau herbal tertentu"]],"lambung":[["Gastritis (maag)","Radang dinding lambung, perih dan mual"],["Dispepsia","Nyeri atau tidak nyaman di ulu hati, cepat kenyang"],["Tukak lambung","Luka pada dinding lambung"],["Infeksi Helicobacter pylori","Bakteri penyebab utama maag dan tukak"],["Gastroenteritis","Radang lambung dan usus, muntah dan diare"],["Keracunan makanan","Makanan tercemar kuman atau racun"],["Perdarahan lambung","Muntah darah atau tinja hitam, darurat"],["Gastroparesis","Pengosongan lambung lambat"],["Kanker lambung","Sering terlambat terdeteksi karena gejalanya mirip maag"],["Stenosis pilorus","Penyempitan pintu keluar lambung"]],"usus":[["Gastroenteritis dan diare infeksi","Akibat virus, bakteri, atau parasit"],["Demam tifoid (tifus)","Infeksi Salmonella, demam berhari-hari"],["Kolera","Diare cair berat yang cepat menyebabkan dehidrasi"],["Cacingan","Infeksi cacing di usus, umum pada anak"],["Giardiasis","Infeksi parasit, diare berlemak dan kembung"],["Penyakit Crohn","Radang kronis dinding usus"],["Penyakit celiac","Reaksi imun terhadap gluten"],["Intoleransi laktosa","Sulit mencerna gula susu"],["Malabsorpsi","Nutrisi tidak terserap dengan baik"],["Tukak duodenum","Luka di awal usus halus"],["Obstruksi usus","Usus tersumbat, nyeri perut dan muntah, darurat"],["Tumor usus halus","Jarang terjadi, jinak atau ganas"]],"kolon":[["Sindrom iritasi usus (IBS)","Nyeri perut dan pola BAB berubah tanpa kerusakan jelas"],["Konstipasi (sembelit)","Buang air besar sulit atau jarang"],["Diare kronis","Diare berlangsung lebih dari 4 minggu"],["Kolitis ulseratif","Radang dan luka kronis pada usus besar"],["Divertikulitis","Kantung kecil di dinding usus meradang"],["Apendisitis (usus buntu)","Radang usus buntu, nyeri perut kanan bawah"],["Disentri","Diare berlendir dan berdarah akibat infeksi"],["Wasir (hemoroid)","Pembuluh darah di anus membengkak"],["Fisura ani","Luka robek kecil di anus, nyeri saat BAB"],["Polip usus","Tonjolan di dinding usus, bisa menjadi kanker"],["Kanker usus besar","Perlu skrining bila usia di atas 45 atau ada riwayat keluarga"]],"kerongkongan":[["GERD","Asam lambung naik, rasa panas di dada"],["Esofagitis","Radang kerongkongan"],["Hernia hiatus","Sebagian lambung naik ke rongga dada"],["Esofagus Barrett","Perubahan lapisan akibat asam lambung berkepanjangan"],["Akalasia","Otot bawah kerongkongan sulit membuka, makanan tersangkut"],["Striktur esofagus","Penyempitan akibat luka atau parut"],["Divertikulum esofagus","Kantung kecil di dinding kerongkongan"],["Varises esofagus","Pembuluh melebar, bisa pecah dan berdarah"],["Gangguan menelan (disfagia)","Sulit atau nyeri saat menelan"],["Kanker esofagus","Sulit menelan yang makin berat dan berat badan turun"]],"limpa":[["Pembesaran limpa","Dipicu infeksi, penyakit hati, atau kelainan darah"],["Hipersplenisme","Limpa terlalu aktif menghancurkan sel darah"],["Ruptur limpa","Robek akibat benturan perut kiri atas, darurat"],["Infark limpa","Aliran darah ke limpa tersumbat"],["Abses limpa","Kantung nanah akibat infeksi"],["Kista limpa","Kantung berisi cairan, umumnya jinak"],["Pembesaran akibat malaria atau mononukleosis","Infeksi tertentu membuat limpa membesar"],["Kelainan darah","Seperti anemia sel sabit, talasemia, dan ITP"],["Limfoma dan leukemia","Kanker darah yang dapat melibatkan limpa"],["Infeksi berat tanpa limpa","Risiko lebih tinggi bila limpa diangkat atau tidak berfungsi"]],"pankreas":[["Diabetes melitus tipe 1","Pankreas tidak menghasilkan insulin"],["Diabetes melitus tipe 2","Tubuh kurang peka terhadap insulin"],["Pankreatitis akut","Radang mendadak, nyeri perut atas hebat"],["Pankreatitis kronis","Radang menahun yang merusak jaringan pankreas"],["Batu empedu","Dapat menyumbat saluran dan memicu pankreatitis"],["Kanker pankreas","Sering baru bergejala saat sudah lanjut"],["Kista dan pseudokista","Kantung cairan, sering setelah pankreatitis"],["Insufisiensi pankreas","Enzim pencernaan kurang, tinja berminyak"],["Fibrosis kistik","Kelainan genetik yang membuat lendir kental"],["Insulinoma","Tumor langka yang membuat gula darah rendah"]],"ginjal":[["Batu ginjal","Endapan mineral, nyeri pinggang hebat"],["Infeksi ginjal (pielonefritis)","Demam, nyeri pinggang, sering dari infeksi kandung kemih"],["Penyakit ginjal kronis","Fungsi ginjal menurun perlahan selama bulan atau tahun"],["Gagal ginjal akut","Fungsi ginjal turun mendadak"],["Glomerulonefritis","Radang unit penyaring ginjal"],["Sindrom nefrotik","Protein banyak hilang lewat urine, tubuh bengkak"],["Nefropati diabetik","Kerusakan ginjal akibat diabetes"],["Nefropati hipertensi","Kerusakan ginjal akibat tekanan darah tinggi"],["Ginjal polikistik","Banyak kista tumbuh di ginjal, bersifat turunan"],["Hidronefrosis","Ginjal membengkak karena aliran urine terhambat"],["Kanker ginjal","Sering ditemukan tanpa gejala di awal"]],"kandung":[["Infeksi saluran kemih (sistitis)","Nyeri dan anyang-anyangan saat buang air kecil"],["Batu kandung kemih","Endapan mineral yang menghambat aliran urine"],["Kandung kemih terlalu aktif","Sering dan mendadak ingin buang air kecil"],["Inkontinensia urine","Urine keluar tanpa disengaja"],["Retensi urine","Sulit atau tidak bisa mengosongkan kandung kemih"],["Sistitis interstisial","Nyeri kandung kemih kronis tanpa infeksi"],["Pembesaran prostat (BPH)","Pada pria, menekan saluran dan menghambat urine"],["Kandung kemih neurogenik","Gangguan saraf yang mengatur kandung kemih"],["Ngompol (enuresis)","Mengompol saat tidur pada anak"],["Kanker kandung kemih","Gejala awal sering berupa urine berdarah"]]};
+const KH={"otak":[["Sakit kepala berulang","Pusing berputar","Kesemutan atau lemas","Sulit konsentrasi","Sering lupa","Gangguan penglihatan"],"lemah satu sisi tubuh, wajah mencong, bicara pelo, kejang, sakit kepala hebat mendadak, atau pingsan"],"trakea":[["Batuk kering","Suara serak","Napas berbunyi","Rasa mengganjal di leher","Nyeri tenggorokan","Sulit menelan"],"sesak berat, bibir kebiruan, atau tersedak dan tidak bisa bicara"],"paru":[["Batuk lebih dari 2 minggu","Batuk berdahak","Sesak napas","Napas berbunyi","Nyeri dada saat bernapas","Demam","Batuk darah"],"sesak berat, bibir kebiruan, batuk darah, atau nyeri dada hebat"],"jantung":[["Nyeri atau tertekan di dada","Jantung berdebar","Sesak saat aktivitas","Mudah lelah","Kaki bengkak","Pusing hampir pingsan"],"nyeri dada menjalar ke lengan atau rahang, keringat dingin, sesak berat, atau pingsan"],"hati":[["Mata dan kulit menguning","Urine pekat seperti teh","Mual dan nafsu makan turun","Nyeri perut kanan atas","Perut membesar","Mudah lelah","Gatal seluruh badan"],"muntah darah, kebingungan, atau perut cepat membesar disertai demam"],"lambung":[["Perih ulu hati","Mual","Muntah","Cepat kenyang","Kembung","Sering sendawa","Tinja hitam"],"muntah darah, tinja hitam, nyeri perut hebat dan kaku, atau berat badan turun tanpa sebab"],"usus":[["Diare","Nyeri perut melilit","Kembung","Mual","Berat badan turun","Demam dan lemas"],"tanda dehidrasi (mulut kering, jarang kencing), tinja berdarah, atau muntah terus dengan perut kaku"],"kolon":[["Sembelit","Diare","Nyeri perut bawah","Kembung","BAB berdarah","Rasa BAB tidak tuntas"],"BAB berdarah banyak, nyeri perut kanan bawah hebat dengan demam, atau tidak bisa BAB dan buang angin disertai muntah"],"kerongkongan":[["Rasa panas di dada","Asam naik ke mulut","Sulit menelan","Nyeri saat menelan","Makanan terasa tersangkut","Batuk di malam hari","Suara serak"],"makanan tidak bisa tertelan sama sekali, muntah darah, atau nyeri dada hebat"],"limpa":[["Nyeri perut kiri atas","Cepat kenyang","Mudah lelah","Mudah memar","Sering infeksi","Tampak pucat"],"nyeri perut kiri atas hebat setelah benturan, pusing, atau pingsan"],"pankreas":[["Nyeri perut atas menjalar ke punggung","Mual dan muntah","Sering haus","Sering buang air kecil","Berat badan turun","Tinja berminyak","Lemas"],"nyeri perut atas hebat terus-menerus, muntah terus, demam, atau kulit menguning"],"ginjal":[["Nyeri pinggang","Urine berdarah atau keruh","Kaki atau wajah bengkak","Urine berbusa","Sering BAK malam hari","Mual dan lemas","Demam menggigil"],"tidak buang air kecil lebih dari 12 jam, nyeri pinggang hebat dengan demam, atau sesak"],"kandung":[["Perih saat buang air kecil","Sering buang air kecil","Anyang-anyangan","Urine keruh atau berbau","Urine berdarah","Sulit memulai buang air kecil","Mengompol"],"tidak bisa buang air kecil sama sekali, demam menggigil dengan nyeri pinggang, atau urine berdarah banyak"]};
+const $=s=>document.querySelector(s),stage=$('#stage'),panel=$('#panel'),chips=$('#chips');
+let renderer,scene,camera,body,cv,meshes={},sel=null,ease=null,drag=false,moved=false,active=false,down,lx=0,ly=0,zoom=1,zt=1,camY=.2,yt=.2,baseD=12.4;
+
+function emptyPanel(){panel.className='';panel.innerHTML='<p class="empty1">Ketuk organ atau labelnya untuk membaca detail.<br>Seret model untuk memutar, cubit untuk zoom.</p>'}
+ORG.forEach(o=>{const b=document.createElement('button');b.className='chip';b.textContent=o.n;b.dataset.id=o.id;b.onclick=()=>select(sel===o.id?null:o.id);chips.appendChild(b)});
+const els={},LEFT=['otak','trakea','paru','hati','usus','kandung'],RIGHT=['kerongkongan','jantung','limpa','lambung','pankreas','ginjal','kolon'],NS='http://www.w3.org/2000/svg';
+const cols=document.createElement('div');cols.className='cols';stage.appendChild(cols);
+$('#lines').innerHTML='';
+[LEFT,RIGHT].forEach(ids=>{const c=document.createElement('div');c.className='col';ids.forEach(id=>{const o=ORG.find(x=>x.id===id),b=document.createElement('button');b.className='card';b.style.setProperty('--k',o.k);b.innerHTML='<b>'+o.n+'</b><span>'+o.f.split('. ')[0]+'</span>';b.onclick=()=>select(sel===id?null:id);c.appendChild(b);els[id]={card:b}});cols.appendChild(c)});
+ORG.forEach(o=>{const e=els[o.id],l=document.createElementNS(NS,'line'),d=document.createElementNS(NS,'circle');l.setAttribute('class','ln');d.setAttribute('class','dt');d.setAttribute('r',3);d.style.fill=o.k;$('#lines').append(l,d);e.ln=l;e.dot=d});
+const RAD={otak:.45,trakea:.07,kerongkongan:.05,paru:.33,jantung:.28,limpa:.15,hati:.42,lambung:.3,pankreas:.1,usus:.32,kolon:.1,ginjal:.16,kandung:.2},ANCH={otak:[-.35,0,0],trakea:[0,.2,0],kerongkongan:[-.075,.325,0],paru:[-.5,.1,0],jantung:[.1,0,0],limpa:[0,0,0],hati:[-.2,0,0],lambung:[.2,0,0],pankreas:[.3,0,0],usus:[-.3,0,0],kolon:[.6,.2,0],ginjal:[.6,0,0],kandung:[-.1,0,0]};
+emptyPanel();
+
+function init(){
+  renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  cv=renderer.domElement;stage.appendChild(cv);
+  scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(40,1,.1,100);
+  scene.add(new THREE.AmbientLight(0xffffff,.75));
+  const d=new THREE.DirectionalLight(0xffffff,.9);d.position.set(3,5,6);scene.add(d);
+  const p=new THREE.PointLight(0x6ee7ff,.7);p.position.set(-4,2,4);scene.add(p);
+  body=new THREE.Group();scene.add(body);
+  const ring=new THREE.Mesh(new THREE.RingGeometry(1.7,1.8,64),new THREE.MeshBasicMaterial({color:0x14b8a6,transparent:true,opacity:.4,side:THREE.DoubleSide}));
+  ring.rotation.x=-Math.PI/2;ring.position.y=-3.9;scene.add(ring);
+  build(cur);
+  const ptr=new Map();let pd=0;
+  cv.addEventListener('pointerdown',e=>{ptr.set(e.pointerId,e);drag=true;moved=false;ease=null;down={x:e.clientX,y:e.clientY};lx=e.clientX;ly=e.clientY;cv.setPointerCapture(e.pointerId);
+    if(ptr.size===2){const a=[...ptr.values()];pd=Math.hypot(a[0].clientX-a[1].clientX,a[0].clientY-a[1].clientY);moved=true}});
+  cv.addEventListener('pointermove',e=>{if(!drag)return;ptr.set(e.pointerId,e);
+    if(ptr.size===2){const a=[...ptr.values()],d=Math.hypot(a[0].clientX-a[1].clientX,a[0].clientY-a[1].clientY);zt=cl(zt*d/(pd||d),1,3);pd=d;yt=clampY(yt);return}
+    body.rotation.y+=(e.clientX-lx)*.01;lx=e.clientX;
+    if(zt>1.05){yt=clampY(yt+(e.clientY-ly)*.016/zt);camY=yt}
+    ly=e.clientY;if(Math.hypot(e.clientX-down.x,e.clientY-down.y)>5)moved=true});
+  cv.addEventListener('pointerup',e=>{ptr.delete(e.pointerId);if(!ptr.size){drag=false;if(!moved)pick(e)}});
+  cv.addEventListener('pointercancel',e=>{ptr.delete(e.pointerId);if(!ptr.size)drag=false});
+  cv.addEventListener('wheel',e=>{e.preventDefault();zt=cl(zt*(e.deltaY<0?1.12:.9),1,3);yt=clampY(yt)},{passive:false});
+  new ResizeObserver(fit).observe(stage);
+  fit();requestAnimationFrame(loop);
+}
+const MD={
+pria:{H:.86,W:.7,C:.92,Sh:1,ar:.24,hs:1,lf:1.18,s:1,hip:.4,g:0},
+wanita:{H:.92,W:.58,C:.8,Sh:.8,ar:.18,hs:.96,lf:1.15,s:.95,hip:.42,g:1},
+anak:{H:.78,W:.72,C:.76,Sh:.76,ar:.17,hs:1.3,lf:1,s:.78,hip:.33,g:0}};
+let cur='pria';const PI=Math.PI;
+const S=r=>new THREE.SphereGeometry(r,28,20),C=(a,b,h)=>new THREE.CylinderGeometry(a,b,h,28),TC=(a,b,h)=>{const g=C(a,b,h);g.translate(0,-h/2,0);return g};
+const skin=new THREE.ShaderMaterial({transparent:true,depthWrite:false,side:THREE.DoubleSide,
+vertexShader:'varying vec3 n,v;void main(){n=normalize(normalMatrix*normal);vec4 q=modelViewMatrix*vec4(position,1.);v=normalize(-q.xyz);gl_Position=projectionMatrix*q;}',
+fragmentShader:'varying vec3 n,v;void main(){vec3 N=normalize(n);float l=.5+.5*dot(N,normalize(vec3(.3,.6,.7)));float f=pow(1.-abs(dot(N,v)),2.2);float sp=pow(max(dot(reflect(-normalize(vec3(.3,.6,.7)),N),v),0.),24.);gl_FragColor=vec4(mix(vec3(.06,.2,.38)*l,vec3(.25,.85,1.),f)+vec3(.35)*sp,.24+f*.65+sp*.3);}'});
+function apply(){Object.keys(meshes).forEach(k=>{const m=meshes[k].userData.mat;m.opacity=!sel||sel===k?1:.25;m.emissiveIntensity=sel===k?.7:.22})}
+const HC={};
+function genBody(m,k){
+  const h=m.hs,hy=2.85+.58*h,q=m.lf<1.05&&k==='anak'?.9:1,ar=m.ar,hp=[m.hip,-.35,0],kn=[m.hip+.03,-.6-1.7*m.lf,.02],an=[m.hip+.06,-.6-3.3*m.lf,0];
+  const sh=[m.Sh+.05,1.92,0],el=[sh[0]+.2*q,sh[1]-1.48*q,0],wr=[el[0]+.25*q,el[1]-1.38*q,0];
+  const ty=[-.98,-.75,-.45,-.1,.3,.8,1.25,1.65,1.95,2.15,2.35,2.5,2.7,2.95],tx=[.35*m.H,.8*m.H,m.H,.5*(m.H+m.W)+.03,m.W,.5*(m.W+m.C),m.C,.5*(m.C+m.Sh)+.05,.97*m.Sh,.8*m.Sh,.5*m.Sh,.3,.21,.2];
+  const ip=y=>{const L=ty.length;if(y<=ty[0])return tx[0];if(y>=ty[L-1])return tx[L-1];let i=0;while(y>ty[i+1])i++;const t=(y-ty[i])/(ty[i+1]-ty[i]),a=tx[Math.max(i-1,0)],b=tx[i],c=tx[i+1],d=tx[Math.min(i+2,L-1)];return .5*(2*b+(c-a)*t+(2*a-5*b+4*c-d)*t*t+(3*b-a-3*c+d)*t*t*t)};
+  const smin=(a,b,k)=>{const t=Math.max(k-Math.abs(a-b),0)/k;return Math.min(a,b)-t*t*k*.25};
+  const cap=(x,y,z,a,b,ra,rb)=>{const px=x-a[0],py=y-a[1],pz=z-a[2],bx=b[0]-a[0],by=b[1]-a[1],bz=b[2]-a[2],t=Math.min(Math.max((px*bx+py*by+pz*bz)/(bx*bx+by*by+bz*bz),0),1);return Math.hypot(px-bx*t,py-by*t,pz-bz*t)-(ra+(rb-ra)*t)};
+  const ell=(x,y,z,c,r)=>(Math.hypot((x-c[0])/r[0],(y-c[1])/r[1],(z-c[2])/r[2])-1)*Math.min(r[0],r[1],r[2]);
+  const f=(x,y,z)=>{
+    x=Math.abs(x);
+    const X=ip(y),Z=.62*X;let d=Math.max((Math.hypot(x/X,z/Z)-1)*Z,y-2.95,-.98-y);
+    d=smin(d,cap(x,y,z,[0,2.45,0],[0,hy-.4*h,0],.22,.19),.18);
+    d=smin(d,ell(x,y,z,[0,hy,0],[.5*h,.64*h,.58*h]),.12);
+    d=smin(d,ell(x,y,z,[0,hy-.36*h,.1*h],[.3*h,.27*h,.34*h]),.1);
+    d=smin(d,ell(x,y,z,[0,hy-.1*h,.57*h],[.06*h,.1*h,.08*h]),.05);
+    d=smin(d,ell(x,y,z,[.5*h,hy,0],[.05*h,.12*h,.08*h]),.04);
+    d=smin(d,ell(x,y,z,[sh[0]-.03,sh[1]-.08,0],[ar*1.4,ar*1.5,ar*1.35]),.22);
+    d=smin(d,cap(x,y,z,sh,el,ar*1.15,ar*.8),.15);
+    d=smin(d,cap(x,y,z,el,wr,ar*.8,ar*.55),.12);
+    d=smin(d,cap(x,y,z,wr,[wr[0]+.04,wr[1]-.5*q,.02],.1,.06),.06);
+    d=smin(d,cap(x,y,z,[wr[0]-.05,wr[1]-.1,.05],[wr[0]-.12,wr[1]-.34*q,.09],.045,.032),.04);
+    d=smin(d,cap(x,y,z,hp,kn,ar*1.95,ar*1.3),.2);
+    d=smin(d,cap(x,y,z,kn,an,ar*1.3,ar*.72),.14);
+    d=smin(d,ell(x,y,z,[kn[0],kn[1]-.45*m.lf,-.1],[ar*1.15,.45*m.lf,ar*1.25]),.18);
+    d=smin(d,cap(x,y,z,an,[an[0]+.02,an[1]-.04,.52],.13,.09),.08);
+    d=smin(d,ell(x,y,z,[m.hip*.8,-.5,-.3],[.3,.32,.3]),.22);
+    if(m.g)d=smin(d,ell(x,y,z,[.3,1.25,.42],[.2,.2,.18]),.12);else if(k==='pria')d=smin(d,ell(x,y,z,[.33,1.45,.45],[.3,.2,.14]),.12);
+    return d};
+  const hh=.07,x0=-2,y0=-4.8,z0=-.9,nx=58,ny=133,nz=29,X=nx+1,Y=ny+1,D=new Float32Array(X*Y*(nz+1));
+  for(let k=0;k<=nz;k++)for(let j=0;j<=ny;j++)for(let i=0;i<=nx;i++)D[i+X*(j+Y*k)]=f(x0+i*hh,y0+j*hh,z0+k*hh);
+  const idx=new Int32Array(nx*ny*nz).fill(-1),pos=[],E=[[0,1],[2,3],[4,5],[6,7],[0,2],[1,3],[4,6],[5,7],[0,4],[1,5],[2,6],[3,7]],cx=[0,1,0,1,0,1,0,1],cy=[0,0,1,1,0,0,1,1],cz=[0,0,0,0,1,1,1,1],v=new Float32Array(8);
+  for(let k=0;k<nz;k++)for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){
+    let mk=0;for(let c=0;c<8;c++){v[c]=D[i+cx[c]+X*(j+cy[c]+Y*(k+cz[c]))];if(v[c]<0)mk|=1<<c}
+    if(mk===0||mk===255)continue;
+    let sx=0,sy=0,sz=0,n=0;
+    for(const e of E){const a=e[0],b=e[1];if((v[a]<0)!==(v[b]<0)){const t=v[a]/(v[a]-v[b]);sx+=cx[a]+t*(cx[b]-cx[a]);sy+=cy[a]+t*(cy[b]-cy[a]);sz+=cz[a]+t*(cz[b]-cz[a]);n++}}
+    idx[i+nx*(j+ny*k)]=pos.length/3;pos.push(x0+(i+sx/n)*hh,y0+(j+sy/n)*hh,z0+(k+sz/n)*hh)}
+  const ix=(i,j,k)=>idx[i+nx*(j+ny*k)],tri=[],quad=(a,b,c,d,fl)=>{if(a<0||b<0||c<0||d<0)return;fl?tri.push(a,c,b,a,d,c):tri.push(a,b,c,a,c,d)};
+  for(let k=1;k<nz;k++)for(let j=1;j<ny;j++)for(let i=1;i<nx;i++){
+    const p=i+X*(j+Y*k),s0=D[p]<0;
+    if(s0!==(D[p+1]<0))quad(ix(i,j-1,k-1),ix(i,j,k-1),ix(i,j,k),ix(i,j-1,k),s0);
+    if(s0!==(D[p+X]<0))quad(ix(i-1,j,k-1),ix(i-1,j,k),ix(i,j,k),ix(i,j,k-1),s0);
+    if(s0!==(D[p+X*Y]<0))quad(ix(i-1,j-1,k),ix(i,j-1,k),ix(i,j,k),ix(i-1,j,k),s0)}
+  const nor=new Float32Array(pos.length),e=.03;
+  for(let i=0;i<pos.length;i+=3){const x=pos[i],y=pos[i+1],z=pos[i+2],gx=f(x+e,y,z)-f(x-e,y,z),gy=f(x,y+e,z)-f(x,y-e,z),gz=f(x,y,z+e)-f(x,y,z-e),L=Math.hypot(gx,gy,gz)||1;nor[i]=gx/L;nor[i+1]=gy/L;nor[i+2]=gz/L}
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(pos),3));g.setAttribute('normal',new THREE.BufferAttribute(nor,3));g.setIndex(new THREE.BufferAttribute(new Uint32Array(tri),1));
+  return g;
+}
+function build(k){
+  cur=k;const m=MD[k],h=m.hs;body.clear();meshes={};
+  const add=(g,x,y,z,p)=>{const o=new THREE.Mesh(g,skin);o.position.set(x,y,z);o.renderOrder=2;(p||body).add(o);return o};
+  const hy=2.85+.58*h;
+  const bm=new THREE.Mesh(HC[k]||(HC[k]=genBody(m,k)),skin);bm.renderOrder=2;body.add(bm);
+  const T=PI,spec={
+   otak:[[0,hy+.05,0],[[S(.4),0,0,0,1.15,.85,1]],0xd9a6ff],
+   trakea:[[0,2.2,.05],[[C(.08,.08,1),0,0,0,1,1,1],[C(.05,.05,.47),-.2,-.63,0,1,1,1,2.13],[C(.05,.05,.47),.2,-.63,0,1,1,1,-2.13]],0xbcd8f0],
+   kerongkongan:[[.19,1.575,-.03],[[C(.045,.045,1.69),0,0,0,1,1,1,-2.91]],0xd9818f],
+   paru:[[0,1.5,0],[[S(.4),-.5,.2,0,.78,1.1,.75],[S(.38),-.5,-.25,0,.85,1,.75],[S(.4),.5,.2,0,.72,1.1,.75],[S(.36),.5,-.25,0,.72,1,.75]],0xe58fb0],
+   jantung:[[.15,1.3,.22],[[S(.27),0,0,0,.95,1.05,.9],[new THREE.ConeGeometry(.2,.34,20),.05,-.3,0,1,1,.9,T+.35],[S(.13),-.14,.22,.02,1,1,1],[S(.12),.16,.2,-.02,1,1,1],[new THREE.TorusGeometry(.14,.05,10,20,T),.02,.3,0,1,1,1,0]],0xe0364d],
+   limpa:[[.65,.6,-.12],[[S(.17),0,0,0,.6,1.2,.8]],0x9c3f6e],
+   hati:[[-.33,.55,.05],[[S(.45),0,0,0,1.15,.72,.65],[S(.28),.5,.1,0,1.2,.6,.6]],0xb8643c],
+   lambung:[[.5,.4,.15],[[S(.3),0,0,0,1.1,.95,.8],[S(.2),-.3,-.15,0,1,.8,.8]],0xf0a35e],
+   pankreas:[[.1,.2,0],[[S(.17),-.4,-.03,0,1,1,1],[C(.07,.07,.8),0,.03,0,1,1,1,PI/2],[S(.1),.42,.1,0,1,1,1]],0xf2bd62],
+   usus:[[0,-.3,.1],[[new THREE.TorusKnotGeometry(.28,.09,90,10,2,3),0,0,0,1.2,.9,.6]],0xf4a99a],
+   kolon:[[0,-.25,.05],[[C(.09,.09,.9),-.6,0,0,1,1,1,0],[C(.09,.09,.9),.6,0,0,1,1,1,0],[C(.09,.09,1.3),0,.45,0,1,1,1,PI/2],[S(.1),-.6,.45,0,1,1,1],[S(.1),.6,.45,0,1,1,1],[S(.1),.5,-.5,0,1,1,1]],0xd98f6c],
+   ginjal:[[0,.15,-.2],[[S(.17),-.6,0,0,.75,1.25,.7],[S(.17),.6,0,0,.75,1.25,.7],[C(.022,.022,.98),-.35,-.43,.2,1,1,1,-2.62],[C(.022,.022,.98),.35,-.43,.2,1,1,1,2.62]],0xc4344a],
+   kandung:[[0,-.7,.12],[[S(.22),0,0,0,1,1,1]],0xf2d25b]};
+  Object.keys(spec).forEach(id=>{
+    const [pos,parts,col]=spec[id],head=id==='otak',ox=['otak','trakea','kerongkongan'].includes(id)?1:['paru','jantung'].includes(id)?m.C/.9:m.W/.72;
+    const g=new THREE.Group(),mat=new THREE.MeshStandardMaterial({color:col,roughness:.35,metalness:.05,transparent:true,emissive:col,emissiveIntensity:.22});
+    parts.forEach(a=>{const o=new THREE.Mesh(a[0],mat);o.position.set(a[1],a[2],a[3]);o.scale.set(a[4],a[5],a[6]);if(a[7])o.rotation.z=a[7];o.userData.id=id;o.renderOrder=1;g.add(o)});
+    g.position.set(pos[0]*ox,pos[1],pos[2]);head?g.scale.setScalar(h):g.scale.set(ox,1,1);
+    g.userData={mat,bs:g.scale.clone()};body.add(g);meshes[id]=g;
+  });
+  body.scale.setScalar(m.s);body.position.y=-3.85+m.s*(.73+3.3*m.lf);
+  apply();
+}
+function setCam(){const l=Math.max(0,4.2*(1-1/zoom));camY=Math.min(Math.max(camY,.2-l),.2+l);camera.position.set(0,camY,baseD/zoom);camera.lookAt(0,camY,0)}
+function clampY(y){const l=Math.max(0,4.2*(1-1/zt));return Math.min(Math.max(y,.2-l),.2+l)}
+function fit(){
+  if(!renderer)return;const w=stage.clientWidth,h=stage.clientHeight;if(!w||!h)return;
+  renderer.setSize(w,h,false);camera.aspect=w/h;
+  const cw=w>=760?210:92,av=Math.max(w-2*(cw+24),120),d=Math.max(13.4,3.9*w/av/(.728*camera.aspect));baseD=d;setCam();stage.classList.toggle('compact',h<560);stage.classList.toggle('narrow',w<760);camera.updateProjectionMatrix();
+}
+function pick(e){
+  const r=cv.getBoundingClientRect(),rc=new THREE.Raycaster();
+  rc.setFromCamera(new THREE.Vector2((e.clientX-r.left)/r.width*2-1,-((e.clientY-r.top)/r.height)*2+1),camera);
+  const hit=rc.intersectObjects(Object.values(meshes),true);
+  select(hit.length?hit[0].object.userData.id:null);
+}
+function select(id){
+  if(sel&&meshes[sel])meshes[sel].scale.copy(meshes[sel].userData.bs);
+  sel=id;apply();if(!id){zt=1;yt=.2}else{zt=stage.clientHeight<560?1.4:1.7;meshes[id].getWorldPosition(V);yt=clampY(V.y)}
+  ORG.forEach(o=>{const e=els[o.id],on=o.id===id;e.card.classList.toggle('on',on);e.ln.classList.toggle('on',on);e.dot.classList.toggle('on',on)});
+  if(!id){emptyPanel();return}
+  const o=ORG.find(x=>x.id===id);panel.className='sel';
+  panel.innerHTML='<div class="ph"><span class="dot" style="background:'+o.k+'"></span><div class="nm"><h3>'+o.n+'</h3><div class="tag">'+o.z+'</div></div><button class="x" aria-label="Tutup">&times;</button></div>'+
+   '<div class="tabs"><button class="on" data-k="f">Fungsi</button><button data-k="t">Tahukah kamu?</button><button data-k="h">Tips sehat</button><button data-k="d">Penyakit umum</button><button data-k="k">Keluhan</button></div>'+
+   '<div class="blk act" data-k="f"><b>Fungsi</b><p>'+o.f+'</p></div><div class="blk" data-k="t"><b>Tahukah kamu?</b><p>'+o.t+'</p></div><div class="blk" data-k="h"><b>Tips sehat</b><p>'+o.h+'</p></div><div class="blk" data-k="d"><b>Penyakit umum</b><ul class="dz">'+(DZ[o.id]||[]).map(d=>'<li><strong>'+d[0]+'</strong> '+d[1]+'</li>').join('')+'</ul><p class="dzn">Daftar umum untuk edukasi, bukan diagnosis. Bila ada keluhan, periksakan ke dokter.</p></div><div class="blk" data-k="k"><b>Saya memiliki keluhan</b><div class="kw"><p class="kq">Ceritakan keluhanmu dengan kata-katamu sendiri:</p><textarea class="kt" rows="3" maxlength="500" placeholder="Contoh: dada terasa berat sejak kemarin, kadang berdebar saat naik tangga"></textarea><div class="rf"><strong>Segera ke IGD bila:</strong> '+(KH[o.id]?KH[o.id][1]:'')+'.</div><button type="button" class="ask" disabled>Tanya SobatSehat AI</button></div></div><p class="foot">Informasi edukasi umum, bukan pengganti saran dokter.</p>';
+  panel.querySelector('.x').onclick=()=>select(null);
+  const kb=panel.querySelector('.ask'),kt=panel.querySelector('.kt');
+  kt.oninput=()=>{kb.disabled=!kt.value.trim()};
+  kb.onclick=()=>{const v=kt.value.trim();if(!v)return;$('#go3').click();send('Saya memiliki keluhan terkait '+o.n.toLowerCase()+': '+v+'. Tolong bantu pahami kemungkinan umumnya, saran perawatan mandiri, dan kapan saya harus ke dokter.')};
+  panel.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{panel.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));panel.querySelectorAll('.blk').forEach(x=>x.classList.toggle('act',x.dataset.k===b.dataset.k))});
+  const t=o.back?Math.PI:0;ease=t+2*Math.PI*Math.round((body.rotation.y-t)/(2*Math.PI));
+}
+const cl=(v,a,b)=>Math.min(Math.max(v,a),b),V=new THREE.Vector3();
+function line(){
+  const sr=stage.getBoundingClientRect();$('#lines').style.clipPath='inset('+sr.top+'px '+(innerWidth-sr.right)+'px '+(innerHeight-sr.bottom)+'px '+sr.left+'px)';
+  const r=cv.getBoundingClientRect(),mid=r.left+r.width/2,ppu=r.height/(2*Math.tan(camera.fov*PI/360)*camera.position.z)*body.scale.x;
+  ORG.forEach(o=>{const g=meshes[o.id],e=els[o.id];if(!g)return;
+    const a=ANCH[o.id]||[0,0,0];V.set(a[0],a[1],a[2]).applyMatrix4(g.matrixWorld).project(camera);
+    const x=r.left+(V.x+1)/2*r.width,y=r.top+(1-V.y)/2*r.height,q=e.card.getBoundingClientRect(),ex=q.left<mid?q.right:q.left,ey=q.top+q.height/2;
+    const dx=ex-x,dy=ey-y,L=Math.hypot(dx,dy)||1,rad=(RAD[o.id]||.1)*ppu,x0=x+dx/L*rad,y0=y+dy/L*rad;
+    const vis=x0>r.left+4&&x0<r.right-4&&y0>r.top+4&&y0<r.bottom-4;e.ln.style.display=e.dot.style.display=vis?'':'none';e.card.classList.toggle('off',!vis);e.ln.setAttribute('x1',x0);e.ln.setAttribute('y1',y0);e.ln.setAttribute('x2',ex);e.ln.setAttribute('y2',ey);e.dot.setAttribute('cx',x0);e.dot.setAttribute('cy',y0)});
+}
+const rm=matchMedia('(prefers-reduced-motion:reduce)').matches;
+function loop(t){
+  requestAnimationFrame(loop);if(!active)return;
+  if(ease!==null){body.rotation.y+=(ease-body.rotation.y)*.1;if(Math.abs(ease-body.rotation.y)<.005)ease=null}
+  if(sel&&!rm){const g=meshes[sel];g.scale.copy(g.userData.bs).multiplyScalar(1+.05*Math.sin(t/260))}
+  zoom+=(zt-zoom)*.12;camY+=(yt-camY)*.12;setCam();renderer.render(scene,camera);line();
+}
+const navStack=[];let navBack=false;
+function show(id){const cur0=document.querySelector('.scr.on');if(!navBack&&cur0&&cur0.id!==id){if(id==='welcome')navStack.length=0;else{const k=navStack.lastIndexOf(id);if(k>-1)navStack.length=k;else{navStack.push(cur0.id);if(navStack.length>20)navStack.shift()}}}
+  document.querySelectorAll('.scr').forEach(s=>s.classList.toggle('on',s.id===id));document.querySelectorAll('#nav [data-s]').forEach(b=>b.classList.toggle('on',b.dataset.s===id));active=id==='explore';$('#lines').style.display=active?'block':'none';if(id==='welcome'){renderHome();SSui()}}
+$('#go').onclick=()=>{show('explore');if(!renderer){try{init()}catch(e){stage.insertAdjacentHTML('beforeend','<p class="hint" style="top:45%;bottom:auto">Model 3D tidak bisa ditampilkan. Pastikan browser mendukung WebGL.</p>')}}else fit()};
+function goBack(){let t=navStack.pop(),cur=document.querySelector('.scr.on');while(t&&cur&&t===cur.id)t=navStack.pop();navBack=true;try{show(t||'welcome');if(t==='explore'&&renderer)fit()}finally{navBack=false}}
+$('#back').onclick=goBack;
+$('.zoom').onclick=e=>{const b=e.target.closest('button');if(!b)return;const z=b.dataset.z;if(z==='0'){select(null);ease=2*Math.PI*Math.round(body.rotation.y/(2*Math.PI))}else{zt=cl(zt*(z==='1'?1.3:1/1.3),1,3);yt=clampY(yt)}};
+document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.seg button').forEach(x=>x.classList.toggle('on',x===b));build(b.dataset.m)});
+const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+document.querySelectorAll('.bk').forEach(b=>b.onclick=goBack);
+$('#go2').onclick=()=>{show('log');renderHist()};
+$('#go3').onclick=()=>{show('chat');intro()};
+const SY=['Sakit kepala','Demam','Batuk','Pilek','Nyeri tenggorokan','Sesak napas','Nyeri dada','Mual','Nyeri perut','Diare','Pusing','Lemas','Nyeri otot','Sulit tidur'],
+MO=[['Sangat baik',5],['Baik',4],['Biasa',3],['Kurang baik',2],['Buruk',1]],MN=Object.fromEntries(MO.map(a=>[a[1],a[0]]));
+let LG=[],mood=0,ck=0;const ss=new Set();
+try{LG=JSON.parse(localStorage.getItem('sobatsehat_log')||localStorage.getItem('sehatku_log')||'[]')}catch(e){}
+const capLG=()=>{let n=0,c=0;LG=LG.filter(e=>e.ci?++c<=120:++n<=120)};
+const persist=()=>{try{localStorage.setItem('sobatsehat_log',JSON.stringify(LG))}catch(e){}if(window.SSsync)window.SSsync()};
+window.SS={get:()=>LG,set:a=>{LG=a;try{localStorage.setItem('sobatsehat_log',JSON.stringify(LG))}catch(e){}renderHist()}};
+MO.forEach(([n,v])=>{const b=el('button','opt',n);b.onclick=()=>{mood=v;[...$('#moods').children].forEach(c=>c.classList.toggle('on',c===b))};$('#moods').appendChild(b)});
+SY.forEach(n=>{const b=el('button','opt',n);b.onclick=()=>{ss.has(n)?ss.delete(n):ss.add(n);b.classList.toggle('on',ss.has(n))};$('#syms').appendChild(b)});
+$('#sev').oninput=e=>$('#sv').textContent=e.target.value;
+const desc=e=>e.ci?descC(e):[e.mood?'Suasana hati: '+MN[e.mood]:'',e.sym.length?'Keluhan: '+e.sym.join(', ')+' (tingkat '+e.sev+'/10)':'Tanpa keluhan',e.slp?'Tidur '+e.slp+' jam':'',e.tmp?'Suhu '+e.tmp+' C':'',e.wt?'BB '+e.wt+' kg':'',e.water!=null?'Minum '+e.water+' gelas':'',e.act!=null?'Aktivitas sekitar '+e.act+' menit':'',e.note?'Catatan: '+e.note:''].filter(Boolean).join(' | ');
+function renderHist(){
+  renderHome();renderAlert();
+  const h=$('#hist');h.innerHTML='';
+  const N=LG.filter(e=>!e.ci);
+  if(!N.length){h.appendChild(el('p','tag','Belum ada catatan.'));return}
+  N.forEach(e=>{const d=el('div','he'),x=el('button','lnk','Hapus');x.onclick=()=>{const j=LG.indexOf(e);if(j>-1)LG.splice(j,1);persist();renderHist()};
+    d.append(el('div','t',new Date(e.t).toLocaleString('id-ID',{dateStyle:'medium',timeStyle:'short'})),el('p','',desc(e)),x);h.appendChild(d)});
+}
+$('#save').onclick=()=>{
+  const v=id=>$('#'+id).value,note=v('note').trim();
+  if(!mood&&!ss.size&&!note){$('#saved').textContent='Isi minimal satu kolom dulu.';return}
+  LG.unshift({t:Date.now(),mood,sym:[...ss],sev:+v('sev'),slp:v('slp'),tmp:v('tmp'),note});capLG();persist();renderHist();
+  mood=0;ss.clear();document.querySelectorAll('#log .opt').forEach(b=>b.classList.remove('on'));['slp','tmp','note'].forEach(i=>$('#'+i).value='');$('#sev').value=0;$('#sv').textContent='0';
+  $('#saved').textContent='Tersimpan.';{const pgEl=$('#log .pg');if(pgEl)pgEl.scrollTop=0}setTimeout(()=>$('#saved').textContent='',2500);
+};
+$('#clr').onclick=e=>{if(!ck){ck=1;e.target.textContent='Klik lagi untuk menghapus';setTimeout(()=>{ck=0;e.target.textContent='Hapus semua'},3000);return}LG=LG.filter(e=>e.ci);persist();renderHist();ck=0;e.target.textContent='Hapus semua'};
+$('#toAi').onclick=()=>{show('chat');intro();$('#useLog').checked=true;send(LG.length?'Tolong bantu pahami catatan kondisi terakhir saya dan beri saran ringan.':'Saya belum punya catatan kondisi. Bagaimana cara memantau kesehatan harian dengan sederhana?')};
+
+let smp=null,convo=[],busy=false,introd=false;
+let CH=[],sid=0,cck=0;try{CH=JSON.parse(localStorage.getItem('sobatsehat_chats')||'[]').filter(c=>c&&Array.isArray(c.m))}catch(e){}
+const saveCH=()=>{try{localStorage.setItem('sobatsehat_chats',JSON.stringify(CH))}catch(e){}if(window.SSsync)window.SSsync()};
+SS.wipe=()=>{LG=[];CH=[];sid=0;convo=[];introd=false;try{['sobatsehat_log','sehatku_log','sobatsehat_chats','sobatsehat_prog'].forEach(k=>localStorage.removeItem(k))}catch(e){}PG=null;renderHist();renderProg();renderChats();$('#msgs').innerHTML=''};
+SS.getC=()=>CH;SS.setC=a=>{CH=a;try{localStorage.setItem('sobatsehat_chats',JSON.stringify(CH))}catch(e){}renderChats()};
+function saveChat(q,a){let c=CH.find(x=>x.id===sid);if(!c){sid=Date.now();c={id:sid,t:sid,m:[]};CH.unshift(c);CH=CH.slice(0,30)}c.m.push(['u',q],['a',a]);c.m=c.m.slice(-60);saveCH()}
+function renderChats(){
+  const h=$('#hl');h.innerHTML='';
+  if(!CH.length){h.appendChild(el('p','tag','Belum ada riwayat chat.'));return}
+  CH.forEach((c,i)=>{
+    const d=document.createElement('details'),sm=document.createElement('summary'),w=el('div','hm'),x=el('button','lnk','Hapus');
+    sm.append(el('b','',(c.m[0]?String(c.m[0][1]):'Percakapan').slice(0,60)),el('span','tag',new Date(c.t).toLocaleString('id-ID',{dateStyle:'medium',timeStyle:'short'})+' - '+Math.ceil(c.m.length/2)+' tanya jawab'));
+    c.m.forEach(m=>w.appendChild(el('div','b '+(m[0]==='u'?'u':'a'),String(m[1]))));
+    x.type='button';x.onclick=()=>{if(!confirm('Hapus percakapan ini? Tidak bisa dibatalkan.'))return;const j=CH.indexOf(c);if(j>-1)CH.splice(j,1);if(c.id===sid){sid=0;convo=[];introd=false;$('#msgs').innerHTML=''}saveCH();renderChats()};
+    const r=el('button','lnk','Lanjutkan chat ini'),ha=el('div','ha');r.type='button';r.onclick=()=>resume(c);ha.append(r,x);
+    d.append(sm,w,ha);h.appendChild(d)});
+}
+let chatTok=0,chatCtl=null;
+function cancelSend(){chatTok++;if(chatCtl){try{chatCtl.abort()}catch(e){}chatCtl=null}busy=false;$('#send').disabled=false}
+function newChat(){cancelSend();convo=[];sid=0;introd=false;$('#msgs').innerHTML='';intro()}
+function resume(c){cancelSend();convo=c.m.map(m=>({role:m[0]==='u'?'user':'assistant',content:String(m[1])}));sid=c.id;introd=true;const bx=$('#msgs');bx.innerHTML='';c.m.forEach(m=>bub(m[0]==='u'?'u':'a',String(m[1])));show('chat');bx.scrollTop=1e9}
+$('#newc').onclick=newChat;
+let histFrom='welcome';const openHist=()=>{const c=document.querySelector('.scr.on');histFrom=c&&c.id!=='hchat'?c.id:'welcome';show('hchat');renderChats()};
+$('#hgoc').onclick=openHist;
+$('#hcb').onclick=goBack;
+$('#hcc').onclick=()=>{if(!CH.length)return;if(!confirm('Hapus semua riwayat chat? Tidak bisa dibatalkan.'))return;CH=[];sid=0;convo=[];introd=false;$('#msgs').innerHTML='';saveCH();renderChats()};
+function bub(c,t){const b=el('div','b '+c,t);$('#msgs').appendChild(b);$('#msgs').scrollTop=1e9;return b}
+function intro(){if(introd)return;introd=true;bub('a','Halo, saya SobatSehat AI. Ceritakan keluhanmu atau pilih topik di bawah. Saya bisa memberi saran ringan, tetapi bukan pengganti dokter.')}
+['Saya sering sakit kepala','Tips tidur lebih nyenyak','Kapan harus ke dokter jika demam?','Bantu baca catatan kondisi saya'].forEach(t=>{const b=el('button','opt',t);b.onclick=()=>send(t);$('#qp').appendChild(b)});
+async function send(text){
+  text=(text||'').trim();if(!text||busy)return;
+  busy=true;$('#send').disabled=true;$('#q').value='';bub('u',text);
+  const tk=++chatTok,ctl=new AbortController(),tmo=setTimeout(()=>ctl.abort(),60000);chatCtl=ctl;
+  const out=bub('a','Sedang berpikir...');
+  try{
+    const last=LG[0],ctx=(($('#useLog').checked&&last?'Catatan kondisi terakhir pengguna ('+new Date(last.t).toLocaleDateString('id-ID')+'): '+desc(last):'')+(withProg?progCtx():'')).trim();withProg=false;
+    convo.push({role:'user',content:text});
+    const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},signal:ctl.signal,body:JSON.stringify({messages:convo.slice(-12),ctx})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok)throw{code:r.status===429?'rate_limited':'err'};
+    if(tk!==chatTok)return;
+    out.textContent=j.text;convo.push({role:'assistant',content:j.text});saveChat(text,j.text);
+  }catch(e){
+    if(tk!==chatTok)return;
+    if(convo.length&&convo[convo.length-1].role==='user')convo.pop();
+    out.textContent=location.protocol==='file:'?'Halaman ini dibuka langsung dari file, jadi server AI belum aktif. Jalankan lewat server (lihat README: node server.js) atau deploy ke Vercel.':e&&e.name==='AbortError'?'Permintaan terlalu lama. Coba kirim ulang.':e&&e.code==='rate_limited'?'Terlalu banyak permintaan atau kuota AI sedang penuh. Coba lagi sebentar.':'Maaf, terjadi kendala. Coba kirim ulang.';
+  }
+  clearTimeout(tmo);if(tk===chatTok){busy=false;chatCtl=null;$('#send').disabled=false}
+}
+$('#send').onclick=()=>send($('#q').value);
+$('#q').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send($('#q').value)}};
+document.querySelectorAll('#nav [data-s]').forEach(b=>b.onclick=()=>{const t=b.dataset.s;navStack.length=0;t==='welcome'?show('welcome'):$({explore:'#go',log:'#go2',chat:'#go3'}[t]).click()});
+$('#hgo').onclick=()=>{const v=$('#hq').value.trim();$('#go3').click();if(v){send(v);$('#hq').value=''}};
+$('#hq').onkeydown=e=>{if(e.key==='Enter')$('#hgo').click()};
+function renderHome(){
+  const c=$('#lastc'),e=LG.find(x=>!x.ci)||null;c.textContent='';
+  const b=el('div','lcb');
+  if(!e)b.append(el('h3','','Belum ada catatan'),el('p','','Catat suasana hati, keluhan, dan jam tidurmu. Ketuk untuk mulai.'));
+  else{b.append(el('h3','',e.mood?MN[e.mood]:'Tanpa suasana hati'),el('p','',new Date(e.t).toLocaleString('id-ID',{dateStyle:'medium',timeStyle:'short'})),el('p','',e.sym.length?'Keluhan: '+e.sym.join(', ')+' (tingkat '+e.sev+'/10)':'Tanpa keluhan'));if(e.slp)b.append(el('p','','Tidur '+e.slp+' jam'))}
+  const tr=triage(e);if(tr&&Date.now()-e.t<12*36e5){b.append(el('p','lbad','Kondisi ini perlu diperiksa. Ketuk untuk melihat panduan.'));c.append(el('div','lch bad','Perlu diperiksa'),b)}else c.append(el('div','lch','Catatan kondisi terakhir'),b);
+  renderProgCard();if(window.renderHomeTips)window.renderHomeTips();if(window.renderHomeArts)window.renderHomeArts();if(window.renderDayCard)window.renderDayCard();
+}
+const sapaan=()=>{const h=new Date().getHours();return h<4?'Selamat malam':h<11?'Selamat pagi':h<15?'Selamat siang':h<18?'Selamat sore':'Selamat malam'};
+function SSui(msg){
+  const u=window.SSuser,ini=u?(u.name.trim()[0]||'?').toUpperCase():'';
+  [$('#avt'),$('#pfa')].forEach(a=>{a.textContent='';
+    if(u&&u.photo){const i=new Image();i.alt='';i.referrerPolicy='no-referrer';i.onerror=()=>{a.textContent=ini};i.src=u.photo;a.appendChild(i)}
+    else if(u)a.textContent=ini;else a.innerHTML='<svg><use href="#i-user"/></svg>'});
+  $('#gtime').textContent=sapaan()+',';
+  $('#gname').textContent=u?u.name:'Sobat Sehat';
+  $('#pfn').textContent=u?u.name:'Belum masuk';
+  $('#pfe').textContent=u?(u.email||'Akun Google'):'Data hanya tersimpan di perangkat ini';
+  $('#pfs').textContent=u?'Tersinkron ke akun Google kamu.':(window.SSauth?'Mode tamu. Masuk untuk sinkron antar perangkat.':'Mode tamu.');
+  $('#pfin').style.display=!u&&window.SSauth?'':'none';
+  $('#pfout').style.display=u?'':'none';
+  $('#pfm').textContent=msg||'';
+}
+$('#avt').onclick=()=>show('profile');
+$('#go4').onclick=openHist;
+$('#go5').onclick=()=>{show('prog');renderProg()};
+$('#pgc').onclick=()=>$('#go5').click();
+$('#go7').onclick=()=>show('profile');
+$('#lastc').onclick=()=>$('#go2').click();
+$('#pfch').onclick=()=>$('#go4').click();
+$('#pflg').onclick=()=>$('#go2').click();
+$('#pfin').onclick=()=>{if(window.SSlogin)window.SSlogin()};
+$('#pfout').onclick=()=>{if(confirm('Keluar dari akun? Catatan dan riwayat chat di perangkat ini akan dihapus. Datamu tetap tersimpan di akun dan muncul lagi saat kamu login.')&&window.SSlogout)window.SSlogout()};
+$('#pfdel').onclick=()=>{if(!confirm('Hapus semua catatan kondisi, riwayat chat, dan program sehat? Jika kamu sedang login, data di akunmu juga ikut terhapus. Ini tidak bisa dibatalkan.'))return;SS.wipe();if(window.SSsync)window.SSsync()};
+function triage(e){
+  if(!e)return null;
+  const t=parseFloat(e.tmp),sev=+e.sev||0,sy=e.sym||[],why=[];let lvl=null;
+  if(sy.includes('Nyeri dada')){lvl='emg';why.push('nyeri dada')}
+  if(sy.includes('Sesak napas')){lvl='emg';why.push('sesak napas')}
+  if(t>=40){lvl='emg';why.push('suhu '+t+' °C')}
+  else if(t>=38){lvl=lvl||'bad';why.push((t>=39?'demam tinggi':'demam')+' (suhu '+t+' °C)')}
+  if(sev>=7){lvl=lvl||'bad';why.push('tingkat keluhan '+sev+'/10')}
+  if(!lvl&&sy.length>=3&&sev>=5){lvl='bad';why.push('beberapa keluhan sekaligus')}
+  if(!lvl&&e.mood===1&&(sev>=5||sy.length)){lvl='bad';why.push('suasana hati buruk disertai keluhan')}
+  return lvl?{lvl,why,fever:t>=38,sy}:null;
+}
+function renderAlert(a0){
+  const a=a0||$('#alert');if(!a)return;
+  const e=a0?LG.find(x=>x.ci):LG.find(x=>!x.ci),r=triage(e);a.textContent='';
+  if(!r||Date.now()-e.t>12*36e5){a.hidden=true;return}
+  a.hidden=false;a.className='al '+r.lvl;
+  a.append(el('div','alh',r.lvl==='emg'?'Segera ke IGD atau hubungi 112 / 119':'Kondisimu sebaiknya diperiksa dokter hari ini'));
+  const b=el('div','alb');
+  b.append(el('p','alw','Penyebab peringatan: '+r.why.join(', ')+'. Ini bukan diagnosis, tetapi tanda yang perlu dinilai tenaga kesehatan.'));
+  const bt=el('div','alact'),mk=(t,h,c)=>{const x=el('a','pb'+(c?' '+c:''),t);x.href=h;x.target='_blank';x.rel='noopener';return x};
+  const emg=r.lvl==='emg';
+  bt.append(mk(emg?'Cari IGD / rumah sakit terdekat':'Cari klinik terdekat','https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(emg?'IGD rumah sakit terdekat':'klinik terdekat')));
+  if(emg)bt.append(mk('Telepon 112','tel:112','red'),mk('Telepon 119 (ambulans)','tel:119','red'));
+  b.append(bt);
+  const cmp=!!a0,det=document.createElement('details'),box=cmp?det:b;
+  if(cmp){det.className='aldet';det.open=r.lvl==='emg';det.append(el('summary','','Lihat panduan lengkap'))}
+  const sec=(h,arr)=>{if(!arr.length)return;const d=el('div','als');d.append(el('b','',h));const u=el('ul');arr.forEach(x=>u.append(el('li','',x)));d.append(u);box.append(d)};
+  const T={'Demam':['Kompres hangat di dahi dan ketiak, pakai pakaian tipis.','Minum air putih sedikit-sedikit tapi sering.'],
+    'Sakit kepala':['Istirahat di ruangan tenang dan redup.'],'Nyeri otot':['Istirahat dan kompres hangat di area yang nyeri.'],
+    'Diare':['Minum larutan oralit sesering mungkin, makan porsi kecil.'],'Mual':['Makan sedikit tapi sering, hindari makanan berminyak dan pedas.'],
+    'Batuk':['Minum air hangat dan istirahatkan suara.'],'Pilek':['Minum air hangat, hirup uap hangat.'],'Nyeri tenggorokan':['Minum air hangat, hindari gorengan dan minuman dingin.'],
+    'Nyeri perut':['Hindari makanan pedas dan asam, kompres hangat di perut.'],'Pusing':['Duduk atau berbaring, bangun perlahan.'],'Lemas':['Berbaring, minum, dan makan yang ringan.']};
+  const M={'Demam':'Parasetamol (penurun demam dan pereda nyeri bebas).','Sakit kepala':'Parasetamol (penurun demam dan pereda nyeri bebas).','Nyeri otot':'Parasetamol (penurun demam dan pereda nyeri bebas).','Diare':'Oralit (garam rehidrasi) dari apotek.',
+    'Batuk':'Obat batuk bebas sesuai jenis batuk. Tanyakan apoteker.','Pilek':'Obat pilek bebas. Tanyakan apoteker, terutama bila punya darah tinggi.'};
+  const keys=[...r.sy];if(r.fever&&!keys.includes('Demam'))keys.unshift('Demam');
+  if(emg){
+    sec('Lakukan sekarang',['Jangan berkendara sendiri. Minta seseorang mengantar atau panggil ambulans.','Duduk atau berbaring dengan posisi nyaman dan longgarkan pakaian.','Siapkan KTP atau kartu BPJS, serta info alergi dan obat yang kamu pakai.']);
+  }else{
+    const now=['Istirahat total dan jangan beraktivitas berat.','Minta seseorang menemani dan mengantarmu ke klinik.'];
+    keys.forEach(k=>(T[k]||[]).forEach(x=>{if(!now.includes(x))now.push(x)}));
+    now.push('Ukur suhu dan pantau gejala setiap 4 sampai 6 jam.');
+    sec('Lakukan sekarang',now);
+    const meds=[];keys.forEach(k=>{if(M[k]&&!meds.includes(M[k]))meds.push(M[k])});
+    if(meds.length){meds.push('Ikuti aturan pakai di label atau tanya apoteker. Jangan minum beberapa obat sekaligus karena bisa terjadi dobel kandungan.','Jangan minum antibiotik tanpa resep dokter. Beri tahu dokter atau apoteker bila kamu alergi, hamil, atau punya penyakit hati, ginjal, atau lambung.');sec('Obat bebas yang umum dipakai',meds)}
+  }
+  sec('Langsung ke IGD bila muncul',['Sesak napas atau nyeri dada.','Pingsan, kejang, atau sulit dibangunkan.','Lemah satu sisi tubuh atau bicara pelo.','Muntah terus-menerus atau tidak bisa minum.','Demam lebih dari 3 hari, atau disertai bintik merah, mimisan, dan nyeri perut hebat (waspada demam berdarah).','Perdarahan hebat.']);
+  if(!emg)sec('Agar cepat pulih',['Tidur 7 sampai 9 jam dan cukupi cairan.','Makan makanan bergizi yang mudah dicerna.','Hindari rokok dan alkohol.','Kembali beraktivitas bertahap setelah gejala reda.','Periksa ulang ke dokter bila belum membaik dalam 2 sampai 3 hari.']);
+  if(!emg){const ab=el('button','ask','Minta panduan lengkap dari AI');ab.onclick=()=>{show('chat');intro();$('#useLog').checked=true;send('Kondisi saya sedang kurang baik. Berikan panduan langkah demi langkah, kapan harus ke dokter, dan cara agar saya cepat pulih.')};box.append(ab)}
+  if(cmp)b.append(det);
+  a.append(b);
+}
+
+const PGK='sobatsehat_prog';let PG=null,withProg=false;
+try{PG=JSON.parse(localStorage.getItem(PGK)||'null')}catch(e){}
+if(PG&&(!PG.start||!PG.done||!Array.isArray(PG.weights)))PG=null;
+const pgSave=()=>{try{PG?localStorage.setItem(PGK,JSON.stringify(PG)):localStorage.removeItem(PGK)}catch(e){}renderProgCard();if(window.SSsync)window.SSsync()};
+SS.getP=()=>PG;SS.setP=p=>{PG=(p&&p.start&&p.done&&Array.isArray(p.weights))?p:null;try{PG?localStorage.setItem(PGK,JSON.stringify(PG)):localStorage.removeItem(PGK)}catch(e){}renderProgCard();renderProg()};
+const dkey=d=>{d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const dfrom=k=>{const a=k.split('-');return new Date(+a[0],+a[1]-1,+a[2])};
+const dayNo=()=>Math.floor((dfrom(dkey())-dfrom(PG.start))/864e5)+1;
+const fmtD=d=>d.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
+const f1=n=>(Math.round(n*10)/10).toLocaleString('id-ID');
+const kat=b=>b<18.5?'Kurus':b<23?'Normal':b<25?'Berat badan lebih':'Obesitas';
+function pgCalc(f){
+  const {sex,age,h,w,act,pace}=f;
+  if(!sex||!age||!h||!w||!act||!pace)return{err:'Lengkapi jenis kelamin, usia, tinggi, berat, aktivitas, dan kecepatan dulu.'};
+  if(age<18||age>65)return{err:'Program ini untuk usia 18 sampai 65 tahun. Konsultasikan rencana berat badan ke dokter atau ahli gizi.'};
+  if(h<120||h>220||w<30||w>300)return{err:'Periksa lagi tinggi dan berat badanmu.'};
+  if(f.spec)return{err:'Karena kondisi yang kamu centang, rencana berat badan sebaiknya disusun bersama dokter atau ahli gizi. Aplikasi ini tidak bisa menggantikannya.'};
+  const hm=h/100,bmi=w/(hm*hm);
+  const severe=bmi<16;
+  if(bmi>=18.5&&bmi<23)return{err:'IMT-mu '+f1(bmi)+' ('+kat(bmi).toLowerCase()+'), berat badanmu sudah ideal, jadi program tidak diperlukan. Pertahankan pola makan, aktivitas, dan tidur yang baik. Bila ingin mengatur berat badan, tanya dokter atau ahli gizi.'};
+  const gain=bmi<18.5;
+  const lo=Math.ceil(18.5*hm*hm*10)/10,hi=Math.floor(22.9*hm*hm*10)/10;
+  const t=f.tgt||(gain?Math.min(hi,Math.max(lo,Math.round(21*hm*hm*10)/10)):Math.min(hi,Math.max(lo,Math.round(22.5*hm*hm*10)/10)));
+  if(t<lo||t>hi)return{err:'Target berat normal untuk tinggi '+h+' cm adalah '+f1(lo)+' sampai '+f1(hi)+' kg.'};
+  if(gain){
+    const gp=Math.min(pace,severe?0.25:0.5),bmr2=10*w+6.25*h-5*age+(sex==='m'?5:-161),tdee2=bmr2*({1:1.2,2:1.375,3:1.55}[act]),kcal2=Math.round((tdee2+gp*1100)/10)*10;
+    const gn=t-w,days2=Math.ceil(gn/gp*7),water2=Math.min(3.5,Math.max(2,Math.round(w*0.033*10)/10));
+    return{gain:true,severe,bmi,t,loss:gn,days:days2,kcal:kcal2,rp:gp,water:water2,floored:false,capped:pace>gp,w,h,age,sex,act,pace:gp};
+  }
+  const bmr=10*w+6.25*h-5*age+(sex==='m'?5:-161),tdee=bmr*({1:1.2,2:1.375,3:1.55}[act]),floor=sex==='m'?1500:1200;
+  const want=Math.round((tdee-pace*1100)/10)*10,kcal=Math.max(floor,want),rp=(tdee-kcal)*7/7700;
+  if(rp<0.1)return{err:'Dengan data ini kebutuhan energimu sudah dekat batas aman terendah, jadi penurunan lewat diet tidak aman. Tambah aktivitas atau konsultasikan ke ahli gizi.'};
+  const loss=w-t,days=Math.ceil(loss/rp*7),water=Math.min(3.5,Math.max(2,Math.round(w*0.033*10)/10));
+  return{gain:false,bmi,t,loss,days,kcal,rp,water,floored:kcal>want,w,h,age,sex,act,pace};
+}
+const pgTasks=n=>PG.gain?[
+  {id:'air',t:'Minum air putih sekitar '+f1(PG.water)+' liter'},
+  {id:'makan',t:'Makan sesuai target sekitar '+PG.kcal+' kkal, 3 kali makan utama ditambah 2 camilan sehat'},
+  {id:'prot',t:'Ada lauk berprotein (telur, ikan, tempe, tahu, atau daging) di tiap makan'},
+  {id:'gerak',t:'Olahraga ringan atau latihan beban sederhana '+(n<=14?15:20)+' menit'},
+  {id:'lemak',t:'Tambah camilan padat gizi (kacang, alpukat, atau susu)'},
+  {id:'tidur',t:'Tidur 7 sampai 8 jam'}]:[
+  {id:'air',t:'Minum air putih sekitar '+f1(PG.water)+' liter'},
+  {id:'gerak',t:'Jalan cepat atau olahraga ringan '+(n<=14?20:30)+' menit'},
+  {id:'makan',t:'Makan sesuai target sekitar '+PG.kcal+' kkal dan catat makananmu'},
+  {id:'sayur',t:'Isi setengah piringmu dengan sayur dan buah'},
+  {id:'manis',t:'Tanpa minuman manis, batasi gorengan'},
+  {id:'tidur',t:'Tidur 7 sampai 8 jam'}];
+function progCtx(){if(!PG)return'';const last=PG.weights.length?PG.weights[PG.weights.length-1].w:PG.w0;return '\nProgram '+(PG.gain?'menaikkan':'menurunkan')+' berat badan pengguna: BB awal '+PG.w0+' kg, sekarang '+last+' kg, target '+PG.tgt+' kg, tinggi '+PG.h+' cm, target sekitar '+PG.kcal+' kkal per hari, hari ke-'+dayNo()+' dari perkiraan '+PG.days+' hari.'}
+function renderProgCard(){
+  const c=$('#pgc');if(!c)return;c.textContent='';const b=el('div','lcb');
+  if(!PG){b.append(el('h3','','Menuju berat badan normal'),el('p','','Isi datamu, dapatkan perkiraan hari dan tugas harian. Ketuk untuk mulai.'));c.append(el('div','lch','Program sehat'),b);return}
+  const dn=PG.done[dkey()]||[],tk=pgTasks(dayNo()),cnt=tk.filter(t=>dn.includes(t.id)).length,all=cnt===tk.length;
+  b.append(el('h3','',cnt+' dari '+tk.length+' tugas hari ini selesai'),el('p','','Hari ke-'+dayNo()+(all?'. Semua tugas selesai, mantap!':'. Ketuk untuk mencentang tugasmu.')));
+  c.append(el('div','lch'+(all?' ok':''),'Tugas harian'),b);
+}
+function renderProg(){const b=$('#pgbody');if(!b)return;b.innerHTML='';PG?pgDash(b):pgSetup(b)}
+function pgSetup(b){
+  const F={sex:'',act:0,pace:0.5};
+  const card=el('div','fc');
+  card.innerHTML='<h3>Asisten pribadi menuju berat badan normal</h3><p class="tag">Untuk berat badan berlebih maupun kurang. Isi datamu. Aplikasi menghitung perkiraan lamanya, target kalori, dan tugas harian yang bisa kamu centang. Datamu hanya tersimpan di perangkat ini.</p>'+
+  '<div class="lbl">Jenis kelamin</div><div class="opts" id="pgs"><button class="opt" data-v="m">Pria</button><button class="opt" data-v="f">Wanita</button></div>'+
+  '<div class="row"><label class="f">Usia (tahun)<input type="number" id="pga" min="18" max="65" inputmode="numeric"></label><label class="f">Tinggi (cm)<input type="number" id="pgh" min="120" max="220" inputmode="decimal"></label><label class="f">Berat sekarang (kg)<input type="number" id="pgw" min="30" max="300" step="0.1" inputmode="decimal"></label><label class="f">Target berat (kg, boleh kosong)<input type="number" id="pgt" min="30" max="150" step="0.1" inputmode="decimal"></label></div>'+
+  '<div class="lbl">Aktivitas harian</div><div class="opts" id="pgc2"><button class="opt" data-v="1">Jarang bergerak</button><button class="opt" data-v="2">Aktivitas ringan</button><button class="opt" data-v="3">Cukup aktif</button></div>'+
+  '<div class="lbl">Kecepatan perubahan berat (kg per minggu)</div><div class="opts" id="pgp"><button class="opt" data-v="0.25">0,25 santai</button><button class="opt on" data-v="0.5">0,5 disarankan</button><button class="opt" data-v="0.75">0,75 lebih cepat (maks. 0,5 bila menaikkan berat)</button></div>'+
+  '<label class="chk"><input type="checkbox" id="pgx"> Saya sedang hamil atau menyusui, punya diabetes, penyakit jantung atau ginjal, atau riwayat gangguan makan</label>'+
+  '<div class="acts"><button class="big sm" id="pgcalc">Hitung programku</button></div>';
+  b.append(card);const res=el('div','',null);res.id='pgres';b.append(res);
+  const grp=(id,k)=>card.querySelectorAll('#'+id+' .opt').forEach(x=>x.onclick=()=>{F[k]=k==='pace'?+x.dataset.v:k==='act'?+x.dataset.v:x.dataset.v;card.querySelectorAll('#'+id+' .opt').forEach(y=>y.classList.toggle('on',y===x))});
+  grp('pgs','sex');grp('pgc2','act');grp('pgp','pace');
+  card.querySelector('#pgcalc').onclick=()=>{
+    const g=i=>parseFloat(card.querySelector('#'+i).value);
+    const r=pgCalc({sex:F.sex,act:F.act,pace:F.pace,age:g('pga'),h:g('pgh'),w:g('pgw'),tgt:g('pgt')||0,spec:card.querySelector('#pgx').checked});
+    res.innerHTML='';const rc=el('div','fc');res.append(rc);
+    if(r.err){rc.classList.add('pgerr');rc.append(el('b','','Belum bisa dibuat'),el('p','',r.err));return}
+    const eta=new Date();eta.setDate(eta.getDate()+r.days);
+    if(r.severe){const w=el('div','sevw');w.append(el('b','','PERHATIAN: berat badanmu sangat rendah (IMT '+f1(r.bmi)+')'),el('p','','Periksakan diri ke dokter atau ahli gizi SEBELUM memulai program ini. Berat badan sangat rendah bisa disebabkan penyakit atau gangguan makan, dan penambahan berat badan perlu diawasi tenaga kesehatan. Hasil di bawah hanya perkiraan awal, bukan pengganti rencana dari dokter. Bila ada lemas berat, pusing, pingsan, atau sesak, segera ke IGD atau hubungi 112.'));rc.append(w)}
+    rc.append(el('h3','','Hasil perhitungan'+(r.gain?' (menaikkan berat badan)':'')));
+    const st=el('div','pgs2');[['IMT sekarang',f1(r.bmi)+' ('+kat(r.bmi)+')'],['Target berat',f1(r.t)+' kg'],[r.gain?'Harus naik':'Harus turun',f1(r.loss)+' kg'],['Perkiraan lama',r.days+' hari (sekitar '+Math.ceil(r.days/7)+' minggu)'],['Perkiraan selesai',fmtD(eta)],['Target kalori',r.kcal+' kkal per hari']].forEach(a=>{const d=el('div','stt');d.append(el('span','',a[0]),el('b','',a[1]));st.append(d)});
+    rc.append(st);
+    rc.append(el('p','tag','Ini perkiraan. Perubahan berat badan tidak selalu lurus dan berbeda tiap orang. Perkiraan diperbarui setiap kamu mencatat berat badan.'+(r.capped?' Untuk menaikkan berat badan, kecepatan dibatasi '+(r.severe?'0,25':'0,5')+' kg per minggu agar aman.':'')+(r.floored?' Target kalori dibatasi agar tidak di bawah batas aman, jadi waktunya sedikit lebih lama dari pilihanmu.':'')));
+    const go=el('button','big sm','Mulai program ini');go.onclick=()=>{PG={gain:!!r.gain,sev:!!r.severe,start:dkey(),sex:r.sex,age:r.age,h:r.h,w0:r.w,tgt:r.t,pace:r.pace,rp:r.rp,kcal:r.kcal,water:r.water,days:r.days,done:{},weights:[]};pgSave();renderProg()};
+    {const ac=el('div','acts');ac.append(go);rc.append(ac)}rc.scrollIntoView({behavior:'smooth',block:'nearest'});
+  };
+}
+function pgDash(b){
+  const n=dayNo(),tk=pgTasks(n),key=dkey(),dn=PG.done[key]||[],cnt=tk.filter(t=>dn.includes(t.id)).length;
+  const last=PG.weights.length?PG.weights[PG.weights.length-1].w:PG.w0,rem=PG.gain?PG.tgt-last:last-PG.tgt,reached=rem<=0.05;
+  const remDays=reached?0:Math.ceil(rem/PG.rp*7),eta=new Date();eta.setDate(eta.getDate()+remDays);
+  const pct=Math.max(0,Math.min(100,(PG.gain?(last-PG.w0)/(PG.tgt-PG.w0):(PG.w0-last)/(PG.w0-PG.tgt))*100));
+  const full=Object.values(PG.done).filter(a=>a.length>=tk.length).length;
+  let streak=0;{const d=new Date();if(!((PG.done[dkey(d)]||[]).length>=tk.length))d.setDate(d.getDate()-1);while((PG.done[dkey(d)]||[]).length>=tk.length){streak++;d.setDate(d.getDate()-1)}}
+  const top=el('div','fc');
+  top.append(el('h3','','Hari ke-'+n),el('p','tag',reached?'Target berat badanmu tercapai.':'Sisa perkiraan '+remDays+' hari (sekitar '+fmtD(eta)+')'));
+  const bar=el('div','pgbar'),fill=el('i');fill.style.width=pct+'%';bar.append(fill);top.append(bar);
+  const st=el('div','pgs2');[['Berat sekarang',f1(last)+' kg'],['Target',f1(PG.tgt)+' kg'],[PG.gain?'Sudah naik':'Sudah turun',f1(Math.max(0,PG.gain?last-PG.w0:PG.w0-last))+' kg'],['Sisa',reached?'0 kg':f1(rem)+' kg'],['Hari tugas lengkap',full+' hari'],['Beruntun',streak+' hari']].forEach(a=>{const d=el('div','stt');d.append(el('span','',a[0]),el('b','',a[1]));st.append(d)});
+  top.append(st);
+  if(reached){top.append(el('p','pgok','Selamat! Kamu mencapai target. Lanjutkan kebiasaan sehat ini untuk menjaga berat badan, atau tanyakan tips pemeliharaan ke AI.'))}
+  if(PG.sev){const w=el('div','sevw');w.append(el('b','','Ingat: berat badanmu sangat rendah'),el('p','','Pastikan sudah memeriksakan diri ke dokter atau ahli gizi dan ikuti arahannya.'));b.append(w)}
+  b.append(top);
+  const tc=el('div','fc');
+  const hd=el('div','hd');hd.append(el('h3','','Tugas hari ini'),el('span','tag',cnt+'/'+tk.length));tc.append(hd);
+  if(new Date().getHours()>=18&&cnt<tk.length)tc.append(el('p','pgwarn','Masih ada tugas yang belum selesai hari ini.'));
+  tk.forEach(t=>{const r=el('button','tk'+(dn.includes(t.id)?' on':''));r.type='button';r.append(el('i','',null),el('span','',t.t));
+    r.onclick=()=>{const a=PG.done[key]||[];PG.done[key]=a.includes(t.id)?a.filter(x=>x!==t.id):[...a,t.id];pgSave();renderProg()};tc.append(r)});
+  if(cnt===tk.length)tc.append(el('p','pgok','Semua tugas hari ini selesai. Sampai jumpa besok!'));
+  b.append(tc);
+  const wc=el('div','fc');wc.append(el('h3','','Catat berat badan'),el('p','tag','Timbang seminggu sekali di jam yang sama. Hasil timbangan jadi ukuran keberhasilan yang sebenarnya.'));
+  const row=el('div','row');const lb=el('label','f','Berat hari ini (kg)'),inp=document.createElement('input');inp.type='number';inp.step='0.1';inp.min='30';inp.max='300';inp.inputMode='decimal';lb.append(inp);row.append(lb);wc.append(row);
+  const sv=el('button','big sm','Simpan berat');sv.onclick=()=>{const w=parseFloat(inp.value);if(!(w>=30&&w<=300))return;PG.weights=PG.weights.filter(x=>x.d!==key);PG.weights.push({d:key,w});PG.weights.sort((a,c)=>a.d<c.d?-1:1);pgSave();renderProg()};
+  {const ac=el('div','acts');ac.append(sv);wc.append(ac)}
+  PG.weights.slice(-5).reverse().forEach(x=>{const h=el('div','he');h.append(el('div','t',fmtD(dfrom(x.d))+': '+f1(x.w)+' kg'));wc.append(h)});
+  b.append(wc);
+  const ic=el('div','fc');ic.append(el('h3','','Rencanamu'),el('p','tag','Target kalori sekitar '+PG.kcal+' kkal per hari, air putih sekitar '+f1(PG.water)+' liter. Berat awal '+f1(PG.w0)+' kg, mulai '+fmtD(dfrom(PG.start))+'.'),el('p','tag','Pengingat berupa tugas harian di beranda. Aplikasi web tidak bisa membunyikan notifikasi saat ditutup, jadi buka beranda tiap hari ya.'));
+  const ab=el('button','ask','Tanya AI tentang programku');ab.onclick=()=>{withProg=true;show('chat');intro();send(reached?'Target berat badan saya sudah tercapai. Bagaimana cara menjaganya?':PG.gain?'Beri saya tips agar program menaikkan berat badan saya berjalan lancar, sehat, dan tetap termotivasi.':'Beri saya tips agar program turun berat badan saya berjalan lancar dan tetap termotivasi.')};
+  const rs=el('button','lnk','Ulangi atau hapus program');rs.style.marginTop='12px';rs.onclick=()=>{if(confirm('Hapus program ini beserta checklist dan catatan beratnya?')){PG=null;pgSave();renderProg()}};
+  ic.append(ab,rs);b.append(ic);
+}
+
+renderHome();SSui();
+
+const TPC={
+ tidur:{n:'Tidur',k:'#a78bfa',kb:'rgba(167,139,250,.18)',ic:'M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z'},
+ makan:{n:'Makan & minum',k:'#6bd18a',kb:'rgba(107,209,138,.18)',ic:'M12 7c-2-2-6-1-6 3 0 4 2 9 4 9 1 0 1-1 2-1s1 1 2 1c2 0 4-5 4-9 0-4-4-5-6-3zM12 7c0-2 1-3 2-3'},
+ gerak:{n:'Gerak',k:'#4aa8ff',kb:'rgba(74,168,255,.18)',ic:'M3 12h4l2-6 4 12 2-6h6'},
+ pikiran:{n:'Pikiran',k:'#2dd4bf',kb:'rgba(45,212,191,.18)',ic:'M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z'},
+ bersih:{n:'Kebersihan',k:'#5cc8ff',kb:'rgba(92,200,255,.18)',ic:'M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z'},
+ p3k:{n:'Pertolongan pertama',k:'#ff9a5c',kb:'rgba(255,154,92,.18)',ic:'M12 5v14M5 12h14'},
+ waspada:{n:'Tanda bahaya',k:'#ff6b6b',kb:'rgba(255,107,107,.18)',ic:'M12 3 2 20h20zM12 10v4M12 17.5v.5'},
+ cegah:{n:'Pencegahan',k:'#ffc24a',kb:'rgba(255,194,74,.18)',ic:'M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z'}
+};
+const TPO=['semua','tidur','makan','gerak','pikiran','bersih','p3k','waspada','cegah'];
+const TPS=[
+ {id:'tidur-jam',c:'tidur',t:'Tidur dan bangun di jam yang sama',b:'Jam tidur yang teratur membuat tubuh lebih mudah mengantuk di malam hari dan segar di pagi hari. Orang dewasa umumnya butuh 7 sampai 9 jam.',s:['Tentukan jam bangun yang realistis, lalu pertahankan juga di akhir pekan.','Mundurkan jam tidur sedikit demi sedikit, sekitar 15 menit setiap beberapa hari.','Batasi tidur siang maksimal 20 sampai 30 menit dan hindari setelah sore hari.'],d:'Sulit tidur lebih dari 3 minggu, mendengkur keras disertai henti napas saat tidur, atau sangat mengantuk di siang hari.'},
+ {id:'tidur-kamar',c:'tidur',t:'Siapkan kamar dan kebiasaan sebelum tidur',b:'Kamar yang gelap, sejuk, dan tenang membantu tidur lebih nyenyak.',s:['Matikan atau redupkan lampu, dan tutup tirai bila di luar terang.','Jauhkan HP dan layar lain sekitar 30 sampai 60 menit sebelum tidur.','Batasi kopi, teh, dan minuman berkafein mulai sore hari.','Hindari makan besar dan rokok menjelang tidur.','Kalau 20 menit belum bisa tidur, bangun sebentar dan lakukan hal tenang seperti membaca, lalu coba lagi.'],d:'Sulit tidur terus-menerus atau tidur tidak pernah terasa cukup meski jamnya sudah cukup.'},
+ {id:'makan-piring',c:'makan',t:'Atur isi piring harian',b:'Prinsip sederhana: separuh piring berisi sayur dan buah, sisanya makanan pokok dan lauk.',s:['Pilih makanan pokok seperti nasi, ubi, atau jagung dalam porsi secukupnya.','Variasikan lauk: ikan, telur, tempe, tahu, ayam, atau kacang-kacangan.','Usahakan sayur di setiap kali makan, dan buah setiap hari.','Makan perlahan dan berhenti saat mulai kenyang.'],d:'Berat badan turun atau naik drastis tanpa sebab jelas, atau nafsu makan hilang berhari-hari.'},
+ {id:'makan-ggl',c:'makan',t:'Batasi gula, garam, dan minyak',b:'Panduan Kemenkes untuk dewasa per hari: gula tidak lebih dari 4 sendok makan, garam tidak lebih dari 1 sendok teh, dan minyak tidak lebih dari 5 sendok makan. Hitung juga yang tersembunyi di minuman manis, mi instan, dan gorengan.',s:['Kurangi minuman manis kemasan, ganti dengan air putih atau teh tawar.','Cicipi dulu sebelum menambah garam atau kecap.','Pilih makanan dikukus, direbus, atau dipanggang daripada digoreng.','Baca label kemasan untuk melihat kandungan gula dan natrium.'],d:'Tekanan darah atau gula darah tinggi: ikuti anjuran makan dari dokter atau ahli gizi.'},
+ {id:'makan-air',c:'makan',t:'Cukupi cairan',b:'Sekitar 8 gelas air putih sehari adalah patokan umum. Kebutuhan naik saat cuaca panas, berolahraga, demam, atau diare.',s:['Bawa botol minum dan isi ulang sepanjang hari.','Minum sedikit-sedikit tapi sering, jangan menunggu haus.','Cek warna urin: kuning pucat berarti cukup, kuning pekat berarti perlu minum lebih banyak.'],d:'Sangat haus, jarang buang air kecil, pusing, atau lemas padahal sudah minum cukup.'},
+ {id:'makan-snack',c:'makan',t:'Pilih camilan yang lebih baik',b:'Camilan bisa membantu menjaga energi bila dipilih dengan baik.',s:['Siapkan buah potong, kacang tanpa garam berlebih, atau yoghurt tawar.','Hindari makan sambil menatap layar agar porsi tidak berlebihan.','Taruh camilan manis dan gorengan di tempat yang sulit terlihat.']},
+ {id:'gerak-150',c:'gerak',t:'Target 150 menit per minggu',b:'Anjuran WHO untuk dewasa: aktivitas intensitas sedang minimal 150 menit per minggu, ditambah latihan penguat otot 2 kali per minggu.',s:['Aktivitas sedang: jalan cepat, bersepeda santai, atau berenang ringan.','Bagi jadi sesi pendek, misalnya 30 menit selama 5 hari.','Latihan otot bisa berupa squat, push-up dinding, atau plank di rumah.','Tanda intensitas sedang: napas lebih cepat tapi masih bisa bicara.'],d:'Nyeri dada, sesak yang tidak wajar, atau pusing hebat saat berolahraga. Hentikan dan periksakan diri.'},
+ {id:'gerak-duduk',c:'gerak',t:'Jangan duduk terlalu lama',b:'Duduk berjam-jam tanpa gerak berkaitan dengan risiko masalah jantung dan metabolisme, meski sudah rutin olahraga.',s:['Pasang pengingat untuk berdiri setiap 30 sampai 60 menit.','Peregangan leher, bahu, dan pinggang selama 2 sampai 3 menit.','Berjalan saat menelepon atau pakai tangga bila memungkinkan.'],d:'Nyeri punggung atau leher yang menjalar ke lengan atau kaki, atau kesemutan yang tidak hilang.'},
+ {id:'gerak-mulai',c:'gerak',t:'Mulai pelan kalau lama tidak olahraga',b:'Yang penting konsisten. Mulai ringan lalu naikkan bertahap supaya tidak cedera dan tidak cepat menyerah.',s:['Mulai dengan jalan kaki 10 menit per hari.','Tambah 5 menit tiap minggu sampai nyaman.','Lakukan pemanasan 5 menit dan pendinginan setelahnya.','Pakai alas kaki yang sesuai dan bawa air minum.'],d:'Punya penyakit jantung, tekanan darah tinggi, diabetes, atau sedang hamil: tanyakan dulu jenis olahraga yang aman.'},
+ {id:'pikiran-napas',c:'pikiran',t:'Napas dalam untuk meredakan tegang',b:'Napas lambat membantu tubuh keluar dari mode tegang. Bisa dilakukan di mana saja dalam 3 sampai 5 menit.',s:['Duduk nyaman dengan punggung tegak.','Tarik napas lewat hidung selama 4 hitungan.','Hembuskan perlahan lewat mulut selama 6 hitungan.','Ulangi sekitar 10 kali sambil memperhatikan napas.'],d:'Cemas atau sedih berlebihan lebih dari 2 minggu dan mengganggu aktivitas. Bicaralah dengan psikolog atau dokter.'},
+ {id:'pikiran-stres',c:'pikiran',t:'Kelola stres harian',b:'Stres wajar, tetapi yang menumpuk bisa mengganggu tidur, makan, dan kesehatan.',s:['Tulis hal yang membebani dan pilah mana yang bisa kamu ubah.','Ceritakan ke orang yang kamu percaya.','Sisihkan waktu untuk hal yang kamu sukai setiap hari.','Batasi paparan berita dan media sosial bila membuat cemas.','Pecah tugas besar jadi langkah kecil.'],d:'Merasa putus asa atau muncul pikiran menyakiti diri: segera hubungi orang terdekat, layanan 119, atau 112 bila darurat.'},
+ {id:'pikiran-sosial',c:'pikiran',t:'Jaga hubungan dengan orang terdekat',b:'Hubungan sosial yang baik membantu kesehatan mental. Luangkan waktu rutin, meski singkat, untuk keluarga atau teman.',s:['Jadwalkan telepon atau bertemu seminggu sekali.','Dengarkan tanpa memegang HP.','Ikut kegiatan komunitas atau hobi bersama.']},
+ {id:'bersih-tangan',c:'bersih',t:'Cuci tangan dengan benar',b:'Cuci tangan pakai sabun adalah cara murah dan efektif mencegah diare, flu, dan banyak infeksi lain.',s:['Basahi tangan dengan air bersih mengalir, lalu beri sabun.','Gosok telapak, punggung tangan, sela jari, dan kuku minimal 20 detik.','Bilas sampai bersih dan keringkan dengan kain atau tisu bersih.','Lakukan sebelum makan, sebelum menyiapkan makanan, setelah dari toilet, dan setelah batuk atau bersin.']},
+ {id:'bersih-gigi',c:'bersih',t:'Rawat gigi dan mulut',b:'Gigi sehat berpengaruh ke kesehatan secara keseluruhan.',s:['Sikat gigi 2 kali sehari: setelah sarapan dan sebelum tidur, pakai pasta gigi berfluoride.','Ganti sikat gigi sekitar tiap 3 bulan atau bila bulunya mekar.','Bersihkan sela gigi dengan benang gigi.','Periksa ke dokter gigi sekitar 6 bulan sekali.'],d:'Gigi berlubang yang nyeri, gusi sering berdarah, atau bengkak di wajah.'},
+ {id:'bersih-batuk',c:'bersih',t:'Etika batuk dan bersin',b:'Cara sederhana agar penyakit tidak menular ke orang sekitar.',s:['Tutup mulut dan hidung dengan siku bagian dalam atau tisu.','Buang tisu langsung dan cuci tangan.','Pakai masker bila sedang batuk atau pilek, apalagi di tempat ramai.','Istirahat di rumah sampai gejala membaik.'],d:'Batuk lebih dari 2 minggu, batuk berdarah, sesak napas, atau demam tinggi yang tidak turun.'},
+ {id:'p3k-bakar',c:'p3k',t:'Luka bakar ringan',b:'Pendinginan cepat dengan air mengalir paling penting dilakukan.',s:['Alirkan air bersih bersuhu ruang ke area luka selama sekitar 20 menit.','Lepaskan cincin, gelang, atau pakaian di sekitar luka sebelum bengkak, kecuali yang menempel pada kulit.','Tutup longgar dengan kain atau kasa bersih.','Jangan oles odol, mentega, minyak, atau es.','Jangan pecahkan lepuhan.'],d:'Luka lebih besar dari telapak tangan, di wajah, tangan, kaki, atau area kelamin, luka dalam, akibat listrik atau bahan kimia, atau korban anak dan lansia.'},
+ {id:'p3k-luka',c:'p3k',t:'Luka gores atau berdarah',b:'Hentikan perdarahan dulu, lalu bersihkan lukanya.',s:['Cuci tangan atau pakai sarung tangan bila ada.','Tekan luka dengan kain bersih selama sekitar 10 menit tanpa sering dibuka.','Setelah darah berhenti, bilas dengan air mengalir dan sabun lembut.','Tutup dengan plester atau kasa bersih dan ganti bila basah atau kotor.'],d:'Darah tidak berhenti setelah 10 menit ditekan, luka dalam atau lebar, luka tusuk atau kotor, gigitan hewan, atau belum pernah atau lupa vaksin tetanus.'},
+ {id:'p3k-mimisan',c:'p3k',t:'Mimisan',b:'Kebanyakan mimisan berhenti sendiri dengan cara yang benar.',s:['Duduk tegak dan condongkan badan ke depan. Jangan mendongak.','Pencet bagian lunak hidung dengan jari selama 10 menit penuh, bernapas lewat mulut.','Kompres dingin di pangkal hidung boleh membantu.','Setelah berhenti, hindari mengorek atau meniup hidung keras selama beberapa jam.'],d:'Darah tidak berhenti setelah 20 menit, setelah benturan keras di kepala atau wajah, atau sangat banyak.'},
+ {id:'p3k-tersedak',c:'p3k',t:'Tersedak (dewasa yang masih sadar)',b:'Bila orang tidak bisa bicara, batuk lemah, atau memegang leher, bertindak cepat.',s:['Minta orang lain menghubungi 112 atau 119 sambil kamu menolong.','Berdiri di belakang korban, beri 5 tepukan keras di punggung di antara tulang belikat.','Bila belum keluar, beri 5 hentakan perut: kepalkan tangan di atas pusar, tarik cepat ke arah dalam dan atas.','Ulangi bergantian sampai benda keluar atau korban tidak sadar.'],d:'Korban tidak sadar atau tidak bernapas: segera hubungi 112 atau 119. Untuk bayi dan anak kecil caranya berbeda, minta bantuan medis segera.'},
+ {id:'p3k-demam',c:'p3k',t:'Demam',b:'Demam adalah respons tubuh melawan infeksi dan sering membaik sendiri. Tujuannya membuat nyaman dan mencegah dehidrasi.',s:['Istirahat cukup dan minum lebih banyak.','Pakai pakaian tipis dan jaga ruangan tetap sejuk.','Kompres hangat di dahi, ketiak, atau lipatan paha.','Ukur suhu tiap beberapa jam dan catat di menu Catat Kondisi.','Untuk obat penurun demam, baca label atau tanyakan ke apoteker.'],d:'Demam lebih dari 3 hari, suhu sangat tinggi, bayi di bawah 3 bulan demam, kejang, leher kaku, ruam, sesak napas, atau sangat lemas.'},
+ {id:'p3k-diare',c:'p3k',t:'Diare',b:'Bahaya utama diare adalah kehilangan cairan.',s:['Minum sedikit tapi sering: air putih, kuah, atau larutan oralit sesuai petunjuk kemasan.','Tetap makan makanan yang mudah dicerna seperti bubur atau pisang.','Hindari makanan pedas, berlemak, dan minuman sangat manis.','Cuci tangan dengan sabun, terutama sebelum makan dan setelah dari toilet.'],d:'Tanda dehidrasi (sangat haus, jarang kencing, lemas, mata cekung), tinja berdarah, demam tinggi, lebih dari 2 hari, atau terjadi pada bayi, anak kecil, dan lansia.'},
+ {id:'p3k-keseleo',c:'p3k',t:'Keseleo atau terkilir',b:'Gunakan prinsip RICE pada 1 sampai 2 hari pertama.',s:['Istirahatkan bagian yang cedera dan jangan dipaksa menumpu.','Es: kompres 15 sampai 20 menit dengan es yang dibungkus kain, ulangi beberapa kali sehari.','Balut longgar dengan perban elastis.','Tinggikan bagian yang cedera lebih tinggi dari jantung bila bisa.'],d:'Tidak bisa menumpu atau menggerakkan, bentuk tampak bengkok, bengkak dan memar hebat, atau mati rasa.'},
+ {id:'p3k-pingsan',c:'p3k',t:'Orang pingsan',b:'Pingsan sering karena tekanan darah turun sesaat, tetapi bisa juga tanda masalah serius.',s:['Baringkan telentang di tempat datar dan tinggikan kaki sekitar 30 cm.','Longgarkan pakaian ketat dan beri udara segar.','Jangan beri makan atau minum sebelum sadar penuh.','Setelah sadar, biarkan duduk dulu sebelum berdiri.'],d:'Tidak sadar lebih dari 1 menit, tidak bernapas atau tidak ada denyut, terjadi setelah benturan kepala, disertai nyeri dada, atau terjadi berulang. Hubungi 112 atau 119.'},
+ {id:'p3k-panas',c:'p3k',t:'Terlalu panas atau sengatan panas',b:'Cuaca panas dan lembap bisa membuat tubuh kepanasan, terutama saat beraktivitas di luar.',s:['Pindahkan ke tempat teduh atau ber-AC dan longgarkan pakaian.','Dinginkan tubuh dengan kain basah, kipas, atau air.','Beri minum sedikit-sedikit bila sadar penuh.','Cegah: hindari aktivitas berat sekitar pukul 10 sampai 16, pakai pakaian ringan, dan minum cukup.'],d:'Suhu tubuh sangat tinggi, bingung, kejang, atau tidak sadar adalah darurat. Hubungi 112 atau 119.'},
+ {id:'waspada-stroke',c:'waspada',t:'Tanda stroke',b:'Stroke harus ditangani secepat mungkin. Waktu sangat menentukan.',s:['Wajah mencong atau tidak simetris saat tersenyum.','Satu lengan atau kaki lemah atau mati rasa.','Bicara pelo, sulit bicara, atau sulit memahami ucapan.','Mendadak sakit kepala hebat, pandangan kabur, atau sulit berjalan.','Catat jam gejala mulai dan jangan beri makan atau minum.'],d:'Bila ada salah satu tanda, segera hubungi 119 atau 112 dan ke IGD. Jangan menunggu membaik sendiri.'},
+ {id:'waspada-jantung',c:'waspada',t:'Tanda serangan jantung',b:'Gejala bisa berbeda pada tiap orang, termasuk pada perempuan dan lansia.',s:['Nyeri, tertekan, atau terasa berat di dada lebih dari beberapa menit.','Nyeri menjalar ke lengan, rahang, leher, atau punggung.','Sesak napas, keringat dingin, mual, atau pusing.','Duduk dan tenangkan diri sambil menunggu bantuan.'],d:'Segera hubungi 119 atau 112 dan jangan menyetir sendiri ke rumah sakit.'},
+ {id:'waspada-sesak',c:'waspada',t:'Sesak napas berat',b:'Sesak yang muncul mendadak atau memburuk tidak boleh ditunda.',s:['Sulit bicara satu kalimat penuh karena sesak.','Bibir atau ujung jari tampak kebiruan.','Napas berbunyi mengi berat atau terengah-engah saat istirahat.','Duduk tegak dan longgarkan pakaian sambil menunggu bantuan.'],d:'Segera hubungi 119 atau 112 atau ke IGD terdekat.'},
+ {id:'cegah-cek',c:'cegah',t:'Pemeriksaan kesehatan berkala',b:'Banyak penyakit seperti tekanan darah tinggi, diabetes, dan kolesterol tinggi tidak bergejala di awal.',s:['Tanyakan ke dokter atau puskesmas jadwal cek yang cocok untuk usia dan riwayat keluargamu.','Pemeriksaan dasar: tekanan darah, gula darah, kolesterol, berat dan tinggi badan.','Catat hasilnya agar mudah dibandingkan dari waktu ke waktu.','Manfaatkan fasilitas skrining di puskesmas atau layanan BPJS bila tersedia.']},
+ {id:'cegah-vaksin',c:'cegah',t:'Lengkapi vaksinasi',b:'Vaksin melindungi dirimu dan orang di sekitarmu, terutama bayi dan lansia.',s:['Cek buku vaksin atau tanyakan status vaksinmu ke puskesmas.','Tetanus perlu penguat berkala, biasanya sekitar tiap 10 tahun.','Tanyakan vaksin lain yang dianjurkan sesuai usia dan kondisimu, misalnya influenza.','Pastikan imunisasi anak sesuai jadwal.']},
+ {id:'cegah-rokok',c:'cegah',t:'Hindari rokok, batasi alkohol',b:'Berhenti merokok manfaatnya terasa dalam hitungan minggu dan terus bertambah.',s:['Tentukan tanggal berhenti dan beri tahu orang terdekat.','Buang rokok, korek, dan asbak di rumah.','Siapkan pengganti saat ingin merokok: minum air, mengunyah permen tanpa gula, atau jalan sebentar.','Tanyakan ke dokter atau puskesmas tentang layanan berhenti merokok.']}
+];
+const TPSBY={};TPS.forEach(t=>TPSBY[t.id]=t);
+function tipDaily(){const pool=TPS.filter(t=>t.c!=='p3k'&&t.c!=='waspada'),n=Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0))/864e5),g=Math.floor(pool.length/3);return[0,1,2].map(i=>pool[(n*3+i*g)%pool.length])}
+function tipsForYou(){
+  const e=LG[0],out=[],add=(id,w)=>{if(out.length<3&&!out.some(o=>o.t.id===id)&&TPSBY[id])out.push({t:TPSBY[id],w})};
+  if(e&&Date.now()-e.t<3*864e5){
+    const sy=e.sym||[],has=n=>sy.includes(n),slp=parseFloat(e.slp);
+    if(has('Nyeri dada'))add('waspada-jantung','Kamu mencatat nyeri dada.');
+    if(has('Sesak napas'))add('waspada-sesak','Kamu mencatat sesak napas.');
+    if(has('Demam'))add('p3k-demam','Kamu mencatat demam.');
+    if(has('Diare'))add('p3k-diare','Kamu mencatat diare.');
+    if(has('Batuk')||has('Pilek'))add('bersih-batuk','Kamu mencatat batuk atau pilek.');
+    if(has('Pusing')||has('Lemas')||has('Nyeri tenggorokan'))add('makan-air','Kamu mencatat keluhan yang bisa dibantu dengan cukup cairan.');
+    if(has('Sulit tidur'))add('tidur-kamar','Kamu mencatat sulit tidur.');
+    if(slp>0&&slp<6)add('tidur-jam','Tidurmu di catatan terakhir hanya '+slp+' jam.');
+    if(e.mood&&e.mood<=2)add('pikiran-napas','Suasana hatimu di catatan terakhir kurang baik.');
+  }
+  return out;
+}
+const SVG0='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
+function tipAsk(t){return 'Saya ingin tahu lebih lanjut tentang: '+t+'. Jelaskan singkat dan praktis, termasuk kapan saya perlu ke dokter.'}
+function tipCard(t,why){
+  const C=TPC[t.c],d=el('details','tcd'+(t.c==='waspada'?' w':''));d.dataset.id=t.id;d.style.setProperty('--k',C.k);d.style.setProperty('--kb',C.kb);
+  const sm=el('summary'),ic=el('span','ci'),tx=el('div','tx'),cv=el('span','chv');
+  ic.innerHTML=SVG0+'<path d="'+C.ic+'"/></svg>';cv.innerHTML=SVG0.replace('<svg','<svg width="20" height="20"')+'<path d="m6 9 6 6 6-6"/></svg>';
+  tx.append(el('b','',t.t));if(why)tx.append(el('span','why',why));tx.append(el('span','',t.b));
+  sm.append(ic,tx,cv);d.append(sm);
+  const b=el('div','tb2');
+  if(t.s){const ol=el('ol');t.s.forEach(x=>ol.append(el('li','',x)));b.append(ol)}
+  if(t.d){const r=el('div','dr'),st=el('strong','',t.c==='waspada'?'Yang harus dilakukan: ':'Kapan ke dokter: ');r.append(st,document.createTextNode(t.d));b.append(r)}
+  const a=el('div','tcn');
+  if(t.c==='waspada'){[['119','Hubungi 119'],['112','Hubungi 112']].forEach(x=>{const l=el('a','pb red',x[1]);l.href='tel:'+x[0];a.append(l)})}
+  const ab=el('button','ask','Tanya AI tentang ini');ab.type='button';ab.onclick=()=>{show('chat');intro();if(!busy)send(tipAsk(t.t))};a.append(ab);
+  b.append(a);d.append(b);return d;
+}
+let tpcat='semua',tpq='';
+function renderTips(){
+  const cs=$('#tcats');cs.innerHTML='';
+  TPO.forEach(k=>{const b=el('button','opt'+(tpcat===k?' on':''),k==='semua'?'Semua':TPC[k].n);b.type='button';b.onclick=()=>{tpcat=k;renderTips()};cs.append(b)});
+  const f=$('#tfor');f.innerHTML='';
+  if(tpcat==='semua'&&!tpq){
+    let a=tipsForYou();const pers=a.length>0;if(!pers)a=[{t:tipDaily()[0]}];
+    const w=el('div','tfc');w.append(el('div','tfh',pers?'Disarankan dari catatanmu':'Tip hari ini'));
+    const bd=el('div','tfb');a.forEach(x=>bd.append(tipCard(x.t,x.w)));
+    if(pers)bd.append(el('p','tfw','Saran ini muncul dari catatan kondisi dalam 3 hari terakhir dan bukan diagnosis.'));
+    w.append(bd);f.append(w);
+  }
+  const L=$('#tlist');L.innerHTML='';
+  const q=tpq.trim().toLowerCase(),list=TPS.filter(t=>(tpcat==='semua'||t.c===tpcat)&&(!q||(t.t+' '+t.b+' '+(t.s||[]).join(' ')+' '+(t.d||'')).toLowerCase().includes(q)));
+  list.forEach(t=>L.append(tipCard(t)));
+  if(!list.length){const e=el('div','fc');e.append(el('h3','','Tidak ada tips yang cocok'),el('p','tag','Coba kata kunci lain, atau tanyakan langsung ke AI.'));
+    if(q){const ab=el('button','ask','Tanya AI: '+tpq.trim().slice(0,60));ab.type='button';ab.onclick=()=>{show('chat');intro();if(!busy)send(tipAsk(tpq.trim()))};e.append(ab)}
+    L.append(e)}
+}
+function openTip(id){
+  tpcat='semua';tpq='';$('#tsq').value='';show('tipsc');renderTips();
+  const d=document.querySelector('#tlist details[data-id="'+id+'"]');if(d){d.open=true;d.scrollIntoView({block:'start'})}
+}
+window.renderHomeTips=function(){
+  const h=$('#tipsl');if(!h)return;h.innerHTML='';
+  tipDaily().forEach(t=>{const C=TPC[t.c],b=el('button','tp'),i=el('span','ti kk'),d=el('div');b.type='button';
+    i.style.setProperty('--k',C.k);i.style.setProperty('--kb',C.kb);i.innerHTML=SVG0+'<path d="'+C.ic+'"/></svg>';
+    d.append(el('b','',t.t),el('span','',t.b.length>90?t.b.slice(0,87).replace(/\s+\S*$/,'')+'...':t.b));b.append(i,d);b.onclick=()=>openTip(t.id);h.append(b)});
+};
+$('#go6').onclick=()=>{tpcat='semua';tpq='';$('#tsq').value='';show('tipsc');renderTips();$('#tipsc .pg').scrollTop=0};
+$('#tipsall').onclick=()=>$('#go6').click();
+$('#tsq').oninput=e=>{tpq=e.target.value;renderTips()};
+renderHomeTips();
+window.renderHomeArts=function(){
+  const k=dkey();if(window._artDay===k)return;window._artDay=k;
+  const n=Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0))/864e5),L=TPS.slice(),r=n%L.length,A=L.slice(r).concat(L.slice(0,r));
+  const card=t=>{const C=TPC[t.c],b=el('button','arc');b.type='button';b.style.setProperty('--k',C.k);b.style.setProperty('--kb',C.kb);
+    b.append(el('span','ak',C.n),el('b','',t.t),el('span','as',t.b.length>110?t.b.slice(0,107).replace(/\s+\S*$/,'')+'...':t.b));b.onclick=()=>openTip(t.id);return b};
+  const fill=(id,arr,dup)=>{const h=$(id);h.innerHTML='';arr.forEach(t=>h.append(card(t)));if(dup)arr.forEach(t=>{const c=card(t);c.tabIndex=-1;c.setAttribute('aria-hidden','true');h.append(c)})};
+  fill('#rtl',A.filter((_,i)=>i%2===0),true);fill('#rtr',A.filter((_,i)=>i%2===1),true);fill('#arow',A.slice(0,12),false);
+};
+renderHomeArts();
+(function(){
+  const rm=matchMedia('(prefers-reduced-motion:reduce)').matches,SP=22;
+  [['#rvl',-1],['#rvr',1]].forEach(a=>{
+    const v=$(a[0]),d=a[1];let pos=0,hov=false,last=0,init=false;
+    v.addEventListener('mouseenter',()=>hov=true);v.addEventListener('mouseleave',()=>{hov=false;pos=v.scrollTop});
+    v.addEventListener('focusin',()=>hov=true);v.addEventListener('focusout',()=>{hov=false;pos=v.scrollTop});
+    const wrap=()=>{const h=v.scrollHeight/2;if(h<50)return;if(v.scrollTop>=h)v.scrollTop-=h;else if(v.scrollTop<=0&&hov)v.scrollTop+=h};
+    v.addEventListener('scroll',()=>{if(hov)wrap()},{passive:true});
+    function tick(t){
+      requestAnimationFrame(tick);const dt=Math.min(64,t-last)/1000;last=t;
+      if(!v.getClientRects().length||rm||hov)return;
+      const h=v.scrollHeight/2;if(h<50)return;
+      if(!init){pos=d<0?h-1:0;init=true}
+      pos+=d*SP*dt;if(pos>=h)pos-=h;if(pos<=0&&d<0)pos+=h;
+      v.scrollTop=pos;
+    }
+    requestAnimationFrame(tick);
+  });
+})();
+const DMC={1:'#ff6b6b',2:'#ff9a5c',3:'#ffc24a',4:'#6bd18a',5:'#2dd4bf'};
+const DACT=[['Tidak ada',0],['Kurang dari 15 menit',10],['15 sampai 30 menit',25],['30 sampai 60 menit',45],['Lebih dari 60 menit',75]];
+const DFEEL=['Tenang','Senang','Bersyukur','Termotivasi','Cemas','Sedih','Marah','Lelah','Kesepian','Kewalahan'];
+const DSTR=[['Tenang',1],['Ringan',2],['Sedang',3],['Tinggi',4],['Sangat tinggi',5]];
+const DENE=[['Sangat rendah',1],['Rendah',2],['Cukup',3],['Baik',4],['Penuh',5]];
+const DSOC=[['Hampir tidak ada',0],['Sebentar saja',1],['Cukup',2],['Banyak',3]];
+const DSN=Object.fromEntries(DSTR.map(a=>[a[1],a[0]])),DEN=Object.fromEntries(DENE.map(a=>[a[1],a[0]])),DSON=Object.fromEntries(DSOC.map(a=>[a[1],a[0]]));
+let dmood=0,dstress=null,dene=null,dsoc=null,dact=null;const dfl=new Set();
+const dByDay=k=>LG.find(e=>e.ci===k)||null;
+function dStreak(){const d=new Date();let n=0;if(!dByDay(dkey(d)))d.setDate(d.getDate()-1);while(dByDay(dkey(d))){n++;d.setDate(d.getDate()-1)}return n}
+function dWeek(){const a=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=dkey(d);a.push({k,l:d.toLocaleDateString('id-ID',{weekday:'short'}),e:dByDay(k)})}return a}
+const dAvg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:null;
+const dNum=x=>{const n=parseFloat(x);return isFinite(n)?n:null};
+function descC(e){return['Suasana hati: '+(MN[e.mood]||'-'),(e.feel||[]).length?'Perasaan: '+e.feel.join(', '):'',e.stress!=null?'Stres: '+DSN[e.stress]+' ('+e.stress+'/5)':'',e.energy!=null?'Energi: '+DEN[e.energy]+' ('+e.energy+'/5)':'',dNum(e.slp)>0?'Tidur '+e.slp+' jam':'',e.soc!=null?'Interaksi sosial: '+DSON[e.soc]:'',e.act!=null?'Aktivitas fisik sekitar '+e.act+' menit':'',e.note?'Catatan: '+e.note:''].filter(Boolean).join(' | ')}
+const CRI=/bunuh diri|mengakhiri hidup|akhiri hidup|ingin mati|pengen mati|pengin mati|mau mati|lebih baik mati|tidak ingin hidup|nggak mau hidup|gak mau hidup|menyakiti diri|melukai diri|self.?harm/i;
+function triageM(e){
+  if(!e)return null;
+  if(CRI.test(e.note||''))return{lvl:'crisis'};
+  const str=e.stress||0,f=e.feel||[];
+  if(e.mood===1&&str>=4)return{lvl:'care'};
+  if(e.mood&&e.mood<=2&&str>=4&&(f.includes('Kewalahan')||f.includes('Kesepian')))return{lvl:'care'};
+  return null;
+}
+function renderMAlert(a){
+  if(!a)return;a.textContent='';const e=dByDay(dkey()),r=triageM(e);
+  if(!r){a.hidden=true;return}
+  a.hidden=false;a.className='al '+(r.lvl==='crisis'?'emg':'bad');
+  const mk=(t,h,c)=>{const x=el('a','pb'+(c?' '+c:''),t);x.href=h;x.target='_blank';x.rel='noopener';return x},
+    mp=q=>'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);
+  const b=el('div','alb'),bt=el('div','alact');
+  if(r.lvl==='crisis'){
+    a.append(el('div','alh','Kamu tidak sendirian. Ada yang bisa membantumu sekarang'));
+    b.append(el('p','alw','Terima kasih sudah jujur menuliskannya. Perasaan seberat ini perlu ditemani. Hubungi seseorang yang kamu percaya sekarang dan jangan sendirian dulu. Jika kamu merasa tidak aman atau berpikir menyakiti dirimu, segera hubungi layanan di bawah.'));
+    bt.append(mk('Telepon 119 (ekstensi 8, layanan kesehatan jiwa)','tel:119','red'),mk('Telepon 112 (darurat)','tel:112','red'),mk('Cari IGD terdekat',mp('IGD rumah sakit terdekat')));
+  }else{
+    a.append(el('div','alh','Hari ini terasa berat'));
+    b.append(el('p','alw','Perasaan berat itu wajar dan tidak perlu dipendam sendiri. Bicara dengan orang yang kamu percaya, atau dengan psikolog atau konselor, bisa membantu. Ini bukan diagnosis.'));
+    bt.append(mk('Cari psikolog atau layanan konseling terdekat',mp('psikolog konseling terdekat')),mk('Cari puskesmas terdekat',mp('puskesmas terdekat')));
+  }
+  b.append(bt);a.append(b);
+}
+function dChips(){
+  const row=(id,list,get,set)=>{const w=$('#'+id);w.innerHTML='';list.forEach(([n,v])=>{const b=el('button','opt'+(get()===v?' on':''),n);b.type='button';b.onclick=()=>{set(get()===v?null:v);dChips()};w.append(b)})};
+  row('dmoods',MO,()=>dmood||null,v=>{dmood=v||0});
+  row('dstr',DSTR,()=>dstress,v=>{dstress=v});
+  row('dene',DENE,()=>dene,v=>{dene=v});
+  row('dsoc',DSOC,()=>dsoc,v=>{dsoc=v});
+  row('dacts',DACT,()=>dact,v=>{dact=v});
+  const f=$('#dfeel');f.innerHTML='';DFEEL.forEach(n=>{const b=el('button','opt'+(dfl.has(n)?' on':''),n);b.type='button';b.onclick=()=>{dfl.has(n)?dfl.delete(n):dfl.add(n);dChips()};f.append(b)});
+}
+function dFill(){
+  const k=dkey(),e=LG.find(x=>x.ci===k);
+  dmood=e?e.mood||0:0;dstress=e&&e.stress!=null?e.stress:null;dene=e&&e.energy!=null?e.energy:null;dsoc=e&&e.soc!=null?e.soc:null;dact=e&&e.act!=null?e.act:null;
+  dfl.clear();(e?e.feel||[]:[]).forEach(x=>dfl.add(x));
+  $('#dslp').value=e?e.slp||'':'';$('#dnote').value=e?e.note||'':'';
+  $('#dtitle').textContent=e?'Perbarui check-in hari ini':'Check-in hari ini';$('#dsave').textContent=e?'Perbarui check-in':'Simpan check-in';
+  $('#ddate').textContent=fmtD(new Date());$('#dsaved').textContent='';dChips();
+}
+function renderDaily(){
+  const wk=dWeek(),filled=wk.filter(x=>x.e),st=dStreak();
+  const mo0=dAvg(filled.map(x=>x.e.mood).filter(Boolean)),str0=dAvg(filled.map(x=>x.e.stress).filter(n=>n!=null));
+  const S=$('#dstats');S.innerHTML='';
+  [['Beruntun',st+' hari'],['Terisi 7 hari',filled.length+' dari 7'],['Rata-rata suasana hati',mo0==null?'-':f1(mo0)+' dari 5'],['Rata-rata stres',str0==null?'-':f1(str0)+' dari 5']].forEach(a=>{const d=el('div','stt');d.append(el('span','',a[0]),el('b','',a[1]));S.append(d)});
+  const W=$('#dweek');W.innerHTML='';
+  wk.forEach(x=>{const c=el('div','dday'),e=x.e,dt=el('span','dt',e&&e.mood?e.mood:'-'),sb=el('span','sb'),h=e?dNum(e.slp):null;
+    if(e&&e.mood)dt.style.background=DMC[e.mood];
+    if(h>0){const i=el('i');i.style.height=Math.min(100,h/9*100)+'%';sb.append(i)}
+    c.append(dt,sb,el('span','',h>0?f1(h)+' j':'-'),el('span','',e&&e.stress!=null?'S'+e.stress:'-'),el('b','',x.l));
+    if(x.k===dkey())c.classList.add('now');W.append(c)});
+  const I=$('#dins');I.innerHTML='';
+  const items=[],n=filled.length;
+  if(n<3)I.append(el('p','tag','Isi check-in minimal 3 hari dalam seminggu untuk melihat ringkasan dan saran.'));
+  else{
+    const e=x=>x.e,sl=filled.map(x=>dNum(x.e.slp)).filter(v=>v!=null&&v>0),ac=filled.map(x=>x.e.act).filter(v=>v!=null),mo=filled.map(x=>x.e.mood).filter(Boolean),
+      sr=filled.map(x=>x.e.stress).filter(v=>v!=null),en=filled.map(x=>x.e.energy).filter(v=>v!=null),so=filled.map(x=>x.e.soc).filter(v=>v!=null);
+    if(mo.length>=3&&dAvg(mo)<=2.5)items.push(['Suasana hatimu cenderung kurang baik minggu ini. Cerita ke orang terdekat bisa membantu. Bila berlangsung lebih dari dua minggu, pertimbangkan bicara dengan psikolog.','pikiran-sosial']);
+    if(sr.length>=3&&dAvg(sr)>=3.5)items.push(['Tingkat stresmu rata-rata '+f1(dAvg(sr))+' dari 5 minggu ini. Coba jeda singkat dan napas dalam di sela aktivitas.','pikiran-stres']);
+    if(en.length>=3&&dAvg(en)<=2)items.push(['Energimu rendah hampir sepanjang minggu. Periksa pola tidur, makan, dan istirahatmu.',null]);
+    if(sl.length>=3&&dAvg(sl)<7)items.push(['Rata-rata tidurmu '+f1(dAvg(sl))+' jam, di bawah anjuran 7 sampai 9 jam. Kurang tidur membuat emosi lebih mudah naik turun.','tidur-jam']);
+    if(so.length>=3&&dAvg(so)<1)items.push(['Interaksimu dengan orang lain minggu ini sedikit. Coba hubungi satu teman atau keluarga, walau hanya lewat pesan.','pikiran-sosial']);
+    if(ac.length>=3){const t=ac.reduce((a,b)=>a+b,0);if(t<150)items.push(['Aktivitas fisik tercatat sekitar '+t+' menit minggu ini. Bergerak teratur membantu suasana hati. Anjuran WHO minimal 150 menit per minggu.','gerak-150'])}
+    if(!items.length)I.append(el('p','pgok','Tidak ada pola yang mengkhawatirkan minggu ini. Pertahankan kebiasaanmu!'));
+    items.forEach(([t,id])=>{const r=el('div','dins');r.append(el('p','',t));if(id){const b=el('button','lnk','Lihat tips');b.type='button';b.onclick=()=>openTip(id);r.append(b)}I.append(r)});
+    const ab=el('button','ask','Tanya AI tentang ringkasan minggu ini');ab.type='button';
+    ab.onclick=()=>{const p=[];if(mo.length)p.push('rata-rata suasana hati '+f1(dAvg(mo))+' dari 5');if(sr.length)p.push('rata-rata stres '+f1(dAvg(sr))+' dari 5');if(en.length)p.push('rata-rata energi '+f1(dAvg(en))+' dari 5');if(sl.length)p.push('rata-rata tidur '+f1(dAvg(sl))+' jam');show('chat');intro();if(!busy)send('Ini ringkasan check-in perasaan saya 7 hari terakhir: '+p.join(', ')+'. Bagaimana kondisi mental saya dan apa yang sebaiknya saya lakukan untuk menjaganya?')};
+    I.append(ab);
+  }
+  renderMAlert($('#dalert'));dAiCard();renderDailyHist();
+}
+function renderDailyHist(){
+  const h=$('#dhistl');if(!h)return;h.innerHTML='';
+  const C=LG.filter(e=>e.ci).sort((a,b)=>a.ci<b.ci?1:a.ci>b.ci?-1:0).slice(0,30);
+  if(!C.length){h.append(el('p','tag','Belum ada check-in harian.'));return}
+  C.forEach(e=>{const d=el('div','he'),x=el('button','lnk','Hapus');x.type='button';
+    x.onclick=()=>{const j=LG.indexOf(e);if(j>-1)LG.splice(j,1);persist();renderHist();dFill();renderDaily()};
+    d.append(el('div','t',fmtD(new Date(e.ci+'T00:00:00'))),el('p','',descC(e)));
+    if(e.ai){const dt=el('details','dhai');dt.append(el('summary','','Masukan AI'),el('p','dait',e.ai));d.append(dt)}
+    d.append(x);h.append(d)});
+}
+let dAiTok=0,dAiBusy=false,dAiErr='',dAiNoRetry=false;
+function dAiPrompt(e){
+  const bits=['suasana hati: '+(MN[e.mood]||'-')];
+  if((e.feel||[]).length)bits.push('perasaan yang muncul: '+e.feel.join(', '));
+  if(e.stress!=null)bits.push('tingkat stres '+e.stress+' dari 5');
+  if(e.energy!=null)bits.push('tingkat energi '+e.energy+' dari 5');
+  if(dNum(e.slp)>0)bits.push('tidur semalam '+e.slp+' jam');
+  if(e.soc!=null)bits.push('interaksi dengan orang lain: '+DSON[e.soc]);
+  if(e.act!=null)bits.push('aktivitas fisik sekitar '+e.act+' menit');
+  if(e.note)bits.push('tulisan bebas: "'+String(e.note).slice(0,300).replace(/"/g,"'")+'"');
+  const prev=dWeek().filter(x=>x.e&&x.k!==e.ci).map(x=>x.e),pa=a=>a.length?f1(dAvg(a)):null,ps=[];
+  if(prev.length>=2){
+    const mo=pa(prev.map(x=>x.mood).filter(Boolean)),sr=pa(prev.map(x=>x.stress).filter(n=>n!=null)),sl=pa(prev.map(x=>dNum(x.slp)).filter(n=>n>0));
+    if(mo)ps.push('rata-rata suasana hati '+mo+' dari 5');if(sr)ps.push('rata-rata stres '+sr+' dari 5');if(sl)ps.push('rata-rata tidur '+sl+' jam');
+  }
+  return 'Saya mengisi check-in kesehatan mental dan perasaan harian. Data hari ini: '+bits.join('; ')+'.'+(ps.length?' Pembanding dari '+prev.length+' hari sebelumnya dalam seminggu terakhir: '+ps.join(', ')+'.':'')+
+    ' Berikan masukan singkat, hangat, dan personal tentang kondisi psikologis saya dalam bahasa Indonesia, maksimal 110 kata, dengan urutan: satu kalimat yang mengakui perasaan hari ini (sebut hal yang sudah baik), dua sampai tiga saran praktis dan spesifik untuk sisa hari ini dan besok (misalnya napas dalam, menulis jurnal, jeda istirahat, bergerak ringan, menghubungi orang dekat, kebiasaan tidur; daftar pakai tanda strip), lalu satu kalimat kapan sebaiknya bicara dengan psikolog atau orang yang dipercaya bila perasaan berat berlanjut. Jangan bertanya balik, jangan mendiagnosis gangguan mental, jangan menyebut obat.';
+}
+function dAiCard(){
+  const c=$('#dai');if(!c)return;c.innerHTML='';const e=LG.find(x=>x.ci===dkey());
+  const box=(t,extra)=>{c.style.display='';c.append(el('div','tfh','Masukan dari AI'));const b=el('div','tfb');b.append(t);if(extra)b.append(extra);c.append(b)};
+  const btn=(t,f)=>{const b=el('button','ask',t);b.type='button';b.onclick=f;return b};
+  if(dAiBusy){box(el('p','dait','AI sedang menyusun masukan untuk check-inmu...'));return}
+  if(dAiErr){box(el('p','dait',dAiErr),dAiNoRetry||!e?null:btn('Coba lagi',()=>dAsk(e)));return}
+  if(e&&e.ai){const w=document.createDocumentFragment();w.append(el('p','dait',e.ai),el('p','tfw','Masukan umum dari AI berdasarkan isianmu, bukan diagnosis dan bukan pengganti psikolog atau dokter.'));box(w,btn('Minta masukan baru',()=>dAsk(e)));return}
+  c.style.display='none';
+}
+async function dAsk(e){
+  if(!e)return;const tok=++dAiTok;dAiErr='';dAiNoRetry=false;
+  const r=triageM(e);
+  if(r&&r.lvl==='crisis'){dAiBusy=false;dAiNoRetry=true;dAiErr='Terima kasih sudah menuliskannya. Fokus ke bantuan di atas dulu. Masukan AI tidak ditampilkan agar kamu tidak menunda mencari dukungan.';dAiCard();return}
+  dAiBusy=true;dAiCard();
+  const ac=new AbortController(),to=setTimeout(()=>ac.abort(),30000);
+  try{
+    const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:dAiPrompt(e)}],ctx:''}),signal:ac.signal});
+    const j=await res.json().catch(()=>({}));
+    if(tok!==dAiTok)return;
+    if(!res.ok||!j.text)throw new Error(res.status===429?'limit':'gagal');
+    const cur=LG.find(x=>x.ci===e.ci&&x.t===e.t);
+    if(cur){cur.ai=String(j.text).trim().slice(0,1500);persist()}
+  }catch(err){
+    if(tok!==dAiTok)return;
+    dAiErr=err&&err.message==='limit'?'Batas permintaan AI sedang penuh. Check-inmu tetap tersimpan, coba minta masukan lagi beberapa menit lagi.':'Masukan AI belum bisa dimuat. Check-inmu tetap tersimpan.';
+  }finally{clearTimeout(to);if(tok===dAiTok){dAiBusy=false;dAiCard();renderDailyHist()}}
+}
+window.renderDayCard=function(){
+  const c=$('#dayc');if(!c)return;c.textContent='';const b=el('div','lcb'),e=dByDay(dkey()),st=dStreak();
+  if(!e){b.append(el('h3','','Belum check-in hari ini'),el('p','','Ceritakan perasaanmu hari ini, cukup 1 menit.'+(st?' Beruntun '+st+' hari, jangan sampai putus.':'')));c.append(el('div','lch wait','Pantau harian'),b)}
+  else{b.append(el('h3','','Check-in hari ini selesai'),el('p','','Beruntun '+st+' hari. Ketuk untuk melihat ringkasan atau memperbarui.'));const tr=triageM(e);
+    if(tr){b.append(el('p','lbad','Hari ini terasa berat. Ketuk untuk melihat dukungan.'));c.append(el('div','lch bad','Pantau harian: butuh perhatian'),b)}else c.append(el('div','lch ok','Pantau harian'),b)}
+}
+function openDaily(){show('daily');if(!dAiBusy){dAiErr='';dAiNoRetry=false}dFill();renderDaily();const p=document.querySelector('#daily .pg');if(p)p.scrollTop=0}
+$('#dayc').onclick=openDaily;
+$('#go8').onclick=openDaily;
+$('#dclr').onclick=()=>{if(!LG.some(e=>e.ci))return;if(!confirm('Hapus semua riwayat check-in harian? Catatan kondisi tidak ikut terhapus.'))return;LG=LG.filter(e=>!e.ci);persist();renderHist();dFill();renderDaily()};
+$('#dsave').onclick=()=>{
+  const slp=$('#dslp').value.trim(),msg=t=>{$('#dsaved').textContent=t};
+  if(!dmood){msg('Pilih suasana hatimu dulu.');return}
+  if(slp!==''&&!(+slp>=0&&+slp<=24)){msg('Jam tidur harus 0 sampai 24.');return}
+  const k=dkey();
+  LG=LG.filter(e=>e.ci!==k);
+  const ent={t:Date.now(),ci:k,mood:dmood,sym:[],feel:[...dfl],stress:dstress,energy:dene,soc:dsoc,slp,act:dact,note:$('#dnote').value.trim()};LG.unshift(ent);
+  capLG();persist();renderHist();dFill();renderDaily();
+  msg('Tersimpan. Beruntun '+dStreak()+' hari.');const p=document.querySelector('#daily .pg');if(p)p.scrollTop=0;setTimeout(()=>msg(''),3500);
+  dAsk(ent);
+};
+window.renderDayCard();
+if(/[?&]test=1/.test(location.search)){
+  let off=0;const R=Date;
+  window.Date=class extends R{constructor(...a){a.length?super(...a):super(R.now()+off)}static now(){return R.now()+off}};
+  const p=document.createElement('div');
+  p.style.cssText='position:fixed;left:8px;bottom:72px;z-index:9999;background:#1f2430;color:#fff;border-radius:14px;padding:10px;font:12px sans-serif;display:grid;gap:6px;width:200px;box-shadow:0 6px 18px rgba(0,0,0,.45)';
+  const hd=document.createElement('b');hd.textContent='MODE UJI';p.append(hd);
+  const msg=document.createElement('div');msg.style.cssText='opacity:.85;min-height:30px';msg.textContent='Tekan tombol dari atas ke bawah.';
+  const add=(t,f,c)=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.style.cssText='padding:9px;border-radius:9px;border:0;color:#fff;font-weight:700;text-align:left;background:'+(c||'#3b82f6');b.onclick=()=>{try{const r=f();msg.textContent=r||('Selesai: '+t)}catch(e){msg.textContent='Gagal: '+e.message}};p.append(b)};
+  add('1. Isi 6 hari check-in mental',()=>{
+    for(let i=6;i>=1;i--){const d=new Date();d.setDate(d.getDate()-i);const k=dkey(d);LG=LG.filter(e=>e.ci!==k);
+      LG.push({t:d.getTime(),ci:k,seed:true,mood:[2,3,2,3,1,2][i-1],sym:[],feel:['Lelah','Cemas'],stress:[4,4,5,3,4,4][i-1],energy:2,soc:0,slp:'5.5',act:0,note:''})}
+    LG.sort((a,b)=>b.t-a.t);persist();renderHist();openDaily();
+    return 'Sekarang isi check-in hari ini lalu simpan. Lihat streak, grafik, saran, dan masukan AI.'});
+  add('2. Program Sehat ke hari ke-10',()=>{
+    if(PG&&!PG.seed&&!confirm('Program Sehat yang ada akan diganti data contoh. Lanjut?'))return 'Dibatalkan.';
+    if(!PG||!PG.seed){const r=pgCalc({sex:'m',age:30,h:170,w:85,act:1,pace:0.5});if(r.err)return r.err;
+      PG={gain:!!r.gain,sev:!!r.severe,start:dkey(),sex:r.sex,age:r.age,h:r.h,w0:r.w,tgt:r.t,pace:r.pace,rp:r.rp,kcal:r.kcal,water:r.water,days:r.days,done:{},weights:[],seed:true}}
+    const st=new Date();st.setDate(st.getDate()-9);PG.start=dkey(st);PG.done={};
+    const tk=pgTasks(10).map(t=>t.id);
+    for(let i=5;i>=1;i--){const d=new Date();d.setDate(d.getDate()-i);PG.done[dkey(d)]=[...tk]}
+    PG.weights=[{d:dkey(st),w:PG.w0},{d:dkey(new Date(Date.now()-4*864e5)),w:Math.round((PG.w0-0.6)*10)/10},{d:dkey(new Date(Date.now()-864e5)),w:Math.round((PG.w0-1.1)*10)/10}];
+    pgSave();show('prog');renderProg();
+    return 'Harusnya tampil Hari ke-10, streak 5 hari, dan 3 catatan berat. Centang tugas hari ini untuk tes.'},'#16a34a');
+  add('3. Maju 1 hari (besok)',()=>{off+=864e5;show('welcome');return 'Tanggal sekarang: '+fmtD(new Date())+'. Cek kartu di beranda: harus kembali "Belum check-in" dan tugas 0 selesai.'},'#f59e0b');
+  add('Kembali ke tanggal asli',()=>{off=0;show('welcome');return 'Tanggal kembali normal: '+fmtD(new Date())},'#6b7280');
+  add('Hapus semua data uji',()=>{
+    off=0;const k=dkey();LG=LG.filter(e=>!e.seed&&!(e.ci&&e.ci>k));persist();renderHist();
+    if(PG){Object.keys(PG.done).forEach(x=>{if(x>k)delete PG.done[x]});if(PG.seed)PG=null;pgSave()}
+    show('welcome');return 'Data uji sudah dibersihkan.'},'#dc2626');
+  p.append(msg);document.body.append(p);
+}
+</script>
+<script type="module">
+const FB={apiKey:"AIzaSyCxa9-EljtWLF5K5AbZV3aQA7peKR6rroo",authDomain:"sobatsehat-72299.firebaseapp.com",projectId:"sobatsehat-72299",appId:"1:605918712747:web:c5fb19738cbb3c710d38ee"};
+if(FB.apiKey&&!FB.apiKey.startsWith('ISI')){
+try{
+  const B='https://www.gstatic.com/firebasejs/10.14.1/';
+  const [{initializeApp},{getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,signOut,onAuthStateChanged},{getFirestore,doc,setDoc,onSnapshot,serverTimestamp}]=await Promise.all([import(B+'firebase-app.js'),import(B+'firebase-auth.js'),import(B+'firebase-firestore.js')]);
+  const app=initializeApp(FB),auth=getAuth(app),db=getFirestore(app);
+  const clean=a=>(Array.isArray(a)?a:[]).filter(e=>e&&typeof e.t==='number'&&Array.isArray(e.sym));
+  const parse=x=>{try{return clean(JSON.parse(x))}catch(e){return[]}};
+  const merge=(a,b)=>{const m=new Map();[...a,...b].forEach(e=>m.set(e.t,e));return(()=>{let n=0,c=0;return[...m.values()].sort((x,y)=>y.t-x.t).filter(e=>e.ci?++c<=120:++n<=120)})()};
+  let ref=null,unsub=null,first=true;
+  window.SSauth=true;
+  function render(u,msg){window.SSuser=u?{name:u.displayName||u.email||'Pengguna',email:u.email||'',photo:u.photoURL||''}:null;SSui(msg)}
+  window.SSlogin=()=>login();
+  window.SSlogout=async()=>{try{await signOut(auth);SS.wipe()}catch(e){console.error(e)}};
+  async function login(){
+    const pr=new GoogleAuthProvider();
+    try{await signInWithPopup(auth,pr)}catch(e){
+      if(e.code==='auth/popup-blocked')signInWithRedirect(auth,pr);
+      else if(e.code!=='auth/popup-closed-by-user'&&e.code!=='auth/cancelled-popup-request'){console.error(e);render(null,'Gagal masuk. Coba lagi.')}
+    }
+  }
+  const cleanC=a=>(Array.isArray(a)?a:[]).filter(c=>c&&typeof c.id==='number'&&Array.isArray(c.m));
+  const parseC=x=>{try{return cleanC(JSON.parse(x))}catch(e){return[]}};
+  const mergeC=(a,b)=>{const m=new Map();[...a,...b].forEach(c=>{const o=m.get(c.id);if(!o||c.m.length>=o.m.length)m.set(c.id,c)});return[...m.values()].sort((x,y)=>y.t-x.t).slice(0,30)};
+  const parseP=x=>{try{const p=JSON.parse(x||'null');return p&&p.start&&p.done&&Array.isArray(p.weights)?p:null}catch(e){return null}};
+  const mergeP=(a,b)=>{if(!a)return b;if(!b)return a;
+    const base=a.start<=b.start?a:b,done={};
+    [a.done,b.done].forEach(o=>Object.keys(o||{}).forEach(k=>{done[k]=[...new Set([...(done[k]||[]),...(o[k]||[])])]}));
+    const w=new Map();[...a.weights,...b.weights].forEach(x=>{if(x&&x.d)w.set(x.d,x)});
+    return Object.assign({},base,{done,weights:[...w.values()].sort((x,y)=>x.d<y.d?-1:1)})};
+  window.SSsync=()=>{if(!ref)return;
+    const C=SS.getC().slice(0,20).map(c=>({id:c.id,t:c.t,m:c.m.slice(-40).map(x=>[x[0],String(x[1]).slice(0,1500)])}));
+    let cj=JSON.stringify(C);while(cj.length>400000&&C.length>1){C.pop();cj=JSON.stringify(C)}
+    setDoc(ref,{log:JSON.stringify(SS.get()),chats:cj,prog:SS.getP()?JSON.stringify(SS.getP()):'',updated:serverTimestamp()},{merge:true}).catch(e=>console.error(e))};
+  onAuthStateChanged(auth,u=>{
+    if(unsub){unsub();unsub=null}
+    ref=null;render(u);if(!u)return;
+    ref=doc(db,'users',u.uid);first=true;
+    unsub=onSnapshot(ref,snap=>{
+      if(snap.metadata.hasPendingWrites)return;
+      const d=snap.exists()?snap.data():{},cloud=parse(d.log),cc=parseC(d.chats);
+      if(first){first=false;SS.set(merge(SS.get(),cloud));SS.setC(mergeC(SS.getC(),cc));SS.setP(mergeP(SS.getP(),parseP(d.prog)));window.SSsync()}
+      else{SS.set(cloud);if(d.chats!==undefined)SS.setC(cc);if(d.prog!==undefined)SS.setP(parseP(d.prog))}
+    },e=>console.error(e));
+  });
+}catch(e){console.error('Firebase gagal dimuat',e)}
+}
+</script>
+</body>
+</html>
